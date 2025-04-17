@@ -32,9 +32,9 @@ type ATSServiceClient interface {
 	// Store a single ATS
 	Upsert(ctx context.Context, in *ATS, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Store multiple ATS
-	BatchUpsert(ctx context.Context, in *ATSs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BatchUpsert(ctx context.Context, in *ATSList, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Get a list of ATS by from/to, symbol, period and network
-	GetBySymbol(ctx context.Context, in *GetBySymbolOptions, opts ...grpc.CallOption) (*ATS, error)
+	GetBySymbol(ctx context.Context, in *GetBySymbolOptions, opts ...grpc.CallOption) (*ATSList, error)
 }
 
 type aTSServiceClient struct {
@@ -54,7 +54,7 @@ func (c *aTSServiceClient) Upsert(ctx context.Context, in *ATS, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *aTSServiceClient) BatchUpsert(ctx context.Context, in *ATSs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *aTSServiceClient) BatchUpsert(ctx context.Context, in *ATSList, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, ATSService_BatchUpsert_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -63,8 +63,8 @@ func (c *aTSServiceClient) BatchUpsert(ctx context.Context, in *ATSs, opts ...gr
 	return out, nil
 }
 
-func (c *aTSServiceClient) GetBySymbol(ctx context.Context, in *GetBySymbolOptions, opts ...grpc.CallOption) (*ATS, error) {
-	out := new(ATS)
+func (c *aTSServiceClient) GetBySymbol(ctx context.Context, in *GetBySymbolOptions, opts ...grpc.CallOption) (*ATSList, error) {
+	out := new(ATSList)
 	err := c.cc.Invoke(ctx, ATSService_GetBySymbol_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,9 +79,9 @@ type ATSServiceServer interface {
 	// Store a single ATS
 	Upsert(context.Context, *ATS) (*emptypb.Empty, error)
 	// Store multiple ATS
-	BatchUpsert(context.Context, *ATSs) (*emptypb.Empty, error)
+	BatchUpsert(context.Context, *ATSList) (*emptypb.Empty, error)
 	// Get a list of ATS by from/to, symbol, period and network
-	GetBySymbol(context.Context, *GetBySymbolOptions) (*ATS, error)
+	GetBySymbol(context.Context, *GetBySymbolOptions) (*ATSList, error)
 }
 
 // UnimplementedATSServiceServer should be embedded to have forward compatible implementations.
@@ -91,10 +91,10 @@ type UnimplementedATSServiceServer struct {
 func (UnimplementedATSServiceServer) Upsert(context.Context, *ATS) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upsert not implemented")
 }
-func (UnimplementedATSServiceServer) BatchUpsert(context.Context, *ATSs) (*emptypb.Empty, error) {
+func (UnimplementedATSServiceServer) BatchUpsert(context.Context, *ATSList) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchUpsert not implemented")
 }
-func (UnimplementedATSServiceServer) GetBySymbol(context.Context, *GetBySymbolOptions) (*ATS, error) {
+func (UnimplementedATSServiceServer) GetBySymbol(context.Context, *GetBySymbolOptions) (*ATSList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBySymbol not implemented")
 }
 
@@ -128,7 +128,7 @@ func _ATSService_Upsert_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _ATSService_BatchUpsert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ATSs)
+	in := new(ATSList)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func _ATSService_BatchUpsert_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: ATSService_BatchUpsert_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ATSServiceServer).BatchUpsert(ctx, req.(*ATSs))
+		return srv.(ATSServiceServer).BatchUpsert(ctx, req.(*ATSList))
 	}
 	return interceptor(ctx, in, info, handler)
 }

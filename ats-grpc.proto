@@ -11,9 +11,9 @@ service ATSService {
     // Store a single ATS
     rpc Upsert(ATS) returns (google.protobuf.Empty) {}
     // Store multiple ATS
-    rpc BatchUpsert(ATSs) returns (google.protobuf.Empty) {}
+    rpc BatchUpsert(ATSList) returns (google.protobuf.Empty) {}
     // Get a list of ATS by from/to, symbol, period and network
-    rpc GetBySymbol(GetBySymbolOptions) returns (ATS) {}
+    rpc GetBySymbol(GetBySymbolOptions) returns (ATSList) {}
 }
 
 message GetBySymbolOptions {
