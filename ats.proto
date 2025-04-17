@@ -4,12 +4,14 @@ package ats.v1;
 
 option go_package = "github.com/sologenic/com-fs-ats-model;ats";
 
+import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
+
 message ATSList {
     repeated ATS ATSList = 1;
 }
 
 message ATS {
-    string Network = 1;
+    metadata.Network Network = 1;
     string Symbol = 2;
     int64 TimeStamp = 3;
     double Open = 4;
