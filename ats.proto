@@ -1,14 +1,14 @@
 syntax = "proto3";
 
-package assettimeseries.v1;
+package ats.v1;
 
-option go_package = "github.com/sologenic/com-fs-asset-time-series-model;assettimeseries";
+option go_package = "github.com/sologenic/com-fs-ats-model;ats";
 
-message AssetTimeSeriesList {
-    repeated AssetTimeSeries AssetTimeSeriesList = 1;
+message ATSs {
+    repeated ATS ATSs = 1;
 }
 
-message AssetTimeSeries {
+message ATS {
     string Network = 1;
     string Symbol = 2;
     int64 TimeStamp = 3;

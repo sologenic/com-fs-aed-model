@@ -1,19 +1,19 @@
 syntax = "proto3";
 
-package assettimeseries.v1;
+package ats.v1;
 
 import "google/protobuf/empty.proto";
-import "assettimeseries.proto";
+import "ats.proto";
 
-option go_package = "github.com/sologenic/com-fs-asset-time-series-model;assettimeseries";
+option go_package = "github.com/sologenic/com-fs-ats-model;ats";
 
-service AssetTimeSeriesService {
-    // Store a single AssetTimeSeries
-    rpc Upsert(AssetTimeSeries) returns (google.protobuf.Empty) {}
-    // Store multiple AssetTimeSeries
-    rpc BatchUpsert(AssetTimeSeries) returns (google.protobuf.Empty) {}
-    // Get a list of AssetTimeSeries by from/to, symbol, period and network
-    rpc GetBySymbol(GetBySymbolOptions) returns (AssetTimeSeries) {}
+service ATSService {
+    // Store a single ATS
+    rpc Upsert(ATS) returns (google.protobuf.Empty) {}
+    // Store multiple ATS
+    rpc BatchUpsert(ATS) returns (google.protobuf.Empty) {}
+    // Get a list of ATS by from/to, symbol, period and network
+    rpc GetBySymbol(GetBySymbolOptions) returns (ATS) {}
 }
 
 message GetBySymbolOptions {

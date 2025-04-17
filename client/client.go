@@ -3,13 +3,13 @@ package client
 import (
 	"context"
 
-	grpcdef "github.com/sologenic/com-fs-asset-time-series-model"
+	grpcdef "github.com/sologenic/com-fs-ats-model"
 	grpcclient "github.com/sologenic/com-fs-utils-lib/go/grpc-client"
 )
 
-const endpoint = "OHLC_STORE"
+const endpoint = "ATS_STORE"
 
-var client *grpcdef.AssetTimeSeriesServiceClient
+var client *grpcdef.ATSServiceClient
 var grpcClient *grpcclient.GRPCClient
 
 /*
@@ -21,11 +21,11 @@ localhost => No port is not local
 func initClient() {
 	grpcClient = grpcclient.InitClient(endpoint)
 
-	cl := grpcdef.NewAssetTimeSeriesServiceClient(grpcClient.Conn)
+	cl := grpcdef.NewATSServiceClient(grpcClient.Conn)
 	client = &cl
 }
 
-func Client() *grpcdef.AssetTimeSeriesServiceClient {
+func Client() *grpcdef.ATSServiceClient {
 	if client == nil {
 		initClient()
 	}

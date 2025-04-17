@@ -1,4 +1,4 @@
-module github.com/sologenic/com-fs-asset-time-series-model
+module github.com/sologenic/com-fs-ats-model
 
 go 1.23.8
 
