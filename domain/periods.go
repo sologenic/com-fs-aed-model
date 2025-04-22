@@ -47,9 +47,9 @@ func initPeriodsMap() {
 	}
 }
 
-// Lookup periods is a map of the period types and their corresponding period duration in minutes for use in the ATS calculation
+// Lookup periods is a map of the period types and their corresponding period duration in minutes for use in the AED calculation
 // The map is calculated to contain the largest possible modulus value on which to base the next calculation
-// By storing the values in minutes in this map, they do not need to be parsed every time the ATS is calculated
+// By storing the values in minutes in this map, they do not need to be parsed every time the AED is calculated
 func initLookupPeriods() {
 	type MinutePeriod struct {
 		duration int
@@ -113,7 +113,7 @@ func (s *Period) offset() int64 {
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
-func (s *Period) ToATSKeyTimestamp(timestamp int64) int64 {
+func (s *Period) ToAEDKeyTimestamp(timestamp int64) int64 {
 	t := s.ToMinute()
 	ts := timestamp - timestamp%(int64(t.Duration)*int64(time.Minute))
 	ts = ts + s.offset()
@@ -125,14 +125,14 @@ func (s *Period) ToATSKeyTimestamp(timestamp int64) int64 {
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
-func (s *Period) ToATSKeyTimestampFrom(timestamp int64) int64 {
-	return s.ToATSKeyTimestamp(timestamp)
+func (s *Period) ToAEDKeyTimestampFrom(timestamp int64) int64 {
+	return s.ToAEDKeyTimestamp(timestamp)
 }
 
 // Returns the end of the timestamp window for the given period and timestamp
-func (s *Period) ToATSKeyTimestampTo(timestamp int64) int64 {
+func (s *Period) ToAEDKeyTimestampTo(timestamp int64) int64 {
 	t := s.ToMinute()
-	ts := s.ToATSKeyTimestamp(timestamp)
+	ts := s.ToAEDKeyTimestamp(timestamp)
 	// Set to end of period:
 	ts = ts + int64(t.Duration)*int64(time.Minute)
 	return ts

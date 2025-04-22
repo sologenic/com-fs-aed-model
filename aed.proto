@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package aed;
+
+option go_package = "github.com/sologenic/com-fs-aed-model;aed";
+
+import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
+
+message AEDs {
+    repeated AED AEDs = 1;
+}
+
+message AED {
+    metadata.Network Network = 1;
+    string OrganizationID = 15;
+    string Symbol = 2;
+    int64 TimeStamp = 3;
+    repeated Value Value = 100;
+    Series Series = 101;
+}
+
+enum Series {
+    SERIES_NOT_USED = 0;
+    OHLC = 1;
+    MARKET_DATA = 2;
+}
+
+message Value {
+    Field Field = 1;
+    oneof Value {
+        string ValueStr = 2;
+        int64 ValueInt64 = 3;
+        double ValueFloat64 = 4;
+    }
+}
+
+enum Field {
+    FIELD_NOT_USED = 0;
+    OPEN = 1;
+    HIGH = 2;
+    LOW = 3;
+    CLOSE = 4;
+    VOLUME = 5;
+    NUMBER_OF_TRADES = 6;
+    PERIOD = 7;
+    INVERTED_VOLUME = 8;
+    MARKET_CAP = 9;
+    EPS = 10;
+    PE_RATIO = 11;
+    YIELD = 12;
+}

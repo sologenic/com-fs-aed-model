@@ -1,4 +1,4 @@
-module github.com/sologenic/com-fs-ats-model
+module github.com/sologenic/com-fs-aed-model
 
 go 1.23.8
 

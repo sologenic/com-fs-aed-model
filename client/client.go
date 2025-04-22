@@ -3,13 +3,13 @@ package client
 import (
 	"context"
 
-	grpcdef "github.com/sologenic/com-fs-ats-model"
+	grpcdef "github.com/sologenic/com-fs-aed-model"
 	grpcclient "github.com/sologenic/com-fs-utils-lib/go/grpc-client"
 )
 
-const endpoint = "ATS_STORE"
+const endpoint = "AED_STORE"
 
-var client *grpcdef.ATSServiceClient
+var client *grpcdef.AEDServiceClient
 var grpcClient *grpcclient.GRPCClient
 
 /*
@@ -21,11 +21,11 @@ localhost => No port is not local
 func initClient() {
 	grpcClient = grpcclient.InitClient(endpoint)
 
-	cl := grpcdef.NewATSServiceClient(grpcClient.Conn)
+	cl := grpcdef.NewAEDServiceClient(grpcClient.Conn)
 	client = &cl
 }
 
-func Client() *grpcdef.ATSServiceClient {
+func Client() *grpcdef.AEDServiceClient {
 	if client == nil {
 		initClient()
 	}

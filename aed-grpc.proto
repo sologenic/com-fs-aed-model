@@ -1,19 +1,19 @@
 syntax = "proto3";
 
-package ats.v1;
+package aed;
 
 import "google/protobuf/empty.proto";
-import "ats.proto";
+import "aed.proto";
 
-option go_package = "github.com/sologenic/com-fs-ats-model;ats";
+option go_package = "github.com/sologenic/com-fs-aed-model;aed";
 
-service ATSService {
-    // Store a single ATS
-    rpc Upsert(ATS) returns (google.protobuf.Empty) {}
-    // Store multiple ATS
-    rpc BatchUpsert(ATSList) returns (google.protobuf.Empty) {}
-    // Get a list of ATS by from/to, symbol, period and network
-    rpc GetBySymbol(GetBySymbolOptions) returns (ATSList) {}
+service AEDService {
+    // Store a single AED
+    rpc Upsert(AED) returns (google.protobuf.Empty) {}
+    // Store multiple AED
+    rpc BatchUpsert(AEDs) returns (google.protobuf.Empty) {}
+    // Get a list of AED by from/to, symbol, period and network
+    rpc GetBySymbol(GetBySymbolOptions) returns (AEDs) {}
 }
 
 message GetBySymbolOptions {
