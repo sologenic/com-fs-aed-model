@@ -22,7 +22,7 @@ message GetBySymbolOptions {
     int64 From = 2;
     int64 To = 3;
     metadata.Network Network = 4;
-    string Period = 5;
+    Period Period = 5;
     // Indicate if the data should be backfilled with the previous period if no data is found
     bool Backfill = 6;
     // Indicates if the data is allowed to be retrieved from the cache (default: false - no cache)
