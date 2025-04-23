@@ -4,6 +4,7 @@ package aed;
 
 import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "aed.proto";
 
 option go_package = "github.com/sologenic/com-fs-aed-model;aed";
@@ -14,24 +15,30 @@ service AEDService {
     // Store multiple AED
     rpc BatchUpsert(AEDs) returns (google.protobuf.Empty) {}
     // Get a list of AED by from/to, symbol, period and network
-    rpc GetBySymbol(GetBySymbolOptions) returns (AEDs) {}
+    rpc Get(AEDFilter) returns (AEDs) {}
+    // Get ohlcs for all the given periods
+    rpc GetOHLCsForPeriods(PeriodsFilter) returns (AEDs) {}
 }
 
-message GetBySymbolOptions {
+message AEDFilter {
     string Symbol = 1;
-    int64 From = 2;
-    int64 To = 3;
-    metadata.Network Network = 4;
-    Period Period = 5;
+    google.protobuf.Timestamp From = 2;
+    optional bool SingleBucket = 3; // Apply from as equal to retrieve only this one bucket for the given time
+    google.protobuf.Timestamp To = 4; 
+    metadata.Network Network = 5;
+    Period Period = 6;
     // Indicate if the data should be backfilled with the previous period if no data is found
-    bool Backfill = 6;
+    bool Backfill = 7;
     // Indicates if the data is allowed to be retrieved from the cache (default: false - no cache)
-    bool AllowCache = 7;
+    bool AllowCache = 8;
 }
 
-// Used in messaging through pub sub
-message RecalculationRequest {
-    metadata.Network Network = 1;
-    string Symbol = 2;
-    int64 TimeStamp = 3;
+message PeriodsFilter {
+    string Symbol = 1;
+    repeated PeriodBucket Periods = 2;
+}
+
+message PeriodBucket {
+    Period Period = 1;
+    google.protobuf.Timestamp Timestamp = 2;
 }
