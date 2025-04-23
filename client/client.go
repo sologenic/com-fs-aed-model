@@ -9,7 +9,7 @@ import (
 
 const endpoint = "AED_STORE"
 
-var client *grpcdef.AEDServiceClient
+var client grpcdef.AEDServiceClient
 var grpcClient *grpcclient.GRPCClient
 
 /*
@@ -20,12 +20,11 @@ localhost => No port is not local
 */
 func initClient() {
 	grpcClient = grpcclient.InitClient(endpoint)
-
 	cl := grpcdef.NewAEDServiceClient(grpcClient.Conn)
-	client = &cl
+	client = cl
 }
 
-func Client() *grpcdef.AEDServiceClient {
+func Client() grpcdef.AEDServiceClient {
 	if client == nil {
 		initClient()
 	}
