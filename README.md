@@ -11,7 +11,7 @@ The client for golang and typescript are provided in the `/client` directory.
 The client is self initializing. For this it requires the following environment variable:
 
 - `AED_STORE` - The host of the service. Host is in the format `host:port`
-- `AED__STORE_TESTING` - Starts the GRPC service in testmode with an in memory buffer. Presence of the variable with the value `TRUE` is required to put the client in test mode.
+- `AED_STORE_TESTING` - Starts the GRPC service in testmode with an in memory buffer. Presence of the variable with the value `TRUE` is required to put the client in test mode.
 
 If the client is included and the non of the env variable is set, the client panics.
 

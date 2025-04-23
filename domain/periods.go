@@ -4,18 +4,15 @@ import (
 	"fmt"
 	"sort"
 	"time"
-)
 
-type Period struct {
-	PeriodType string
-	Duration   int
-}
+	aedgrpc "github.com/sologenic/com-fs-aed-model"
+)
 
 // The list of periods that we want to calculate
 var (
-	PeriodsList       []*Period
-	AssociatedPeriods = make(map[string]*Period)
-	PeriodsMap        = map[string]*Period{}
+	PeriodsList       []*aedgrpc.Period
+	AssociatedPeriods = make(map[string]*aedgrpc.Period)
+	PeriodsMap        = map[string]*aedgrpc.Period{}
 )
 
 func init() {
@@ -25,25 +22,25 @@ func init() {
 }
 
 func initPeriodsList() {
-	PeriodsList = make([]*Period, 0)
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "minute", Duration: 1})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "minute", Duration: 3})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "minute", Duration: 5})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "minute", Duration: 15})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "minute", Duration: 30})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "hour", Duration: 1})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "hour", Duration: 3})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "hour", Duration: 6})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "hour", Duration: 12})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "day", Duration: 1})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "day", Duration: 3})
-	PeriodsList = append(PeriodsList, &Period{PeriodType: "week", Duration: 1})
+	PeriodsList = make([]*aedgrpc.Period, 0)
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 1})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 3})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 5})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 15})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 30})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 1})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 3})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 6})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 12})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 3})
+	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_WEEK, Duration: 1})
 }
 
 func initPeriodsMap() {
 	// String to period lookup map (for faster lookup than recalculating every time)
 	for _, p := range PeriodsList {
-		PeriodsMap[p.ToString()] = p
+		PeriodsMap[ToString(p)] = p
 	}
 }
 
@@ -54,15 +51,17 @@ func initLookupPeriods() {
 	type MinutePeriod struct {
 		duration int
 		key      string
-		period   *Period
+		period   *aedgrpc.Period
 	}
 	// Initialize the period lookup map:
 	// Translate the values all to Duration in minute:
 	convertedPeriods := make([]*MinutePeriod, 0)
 	for _, period := range PeriodsList {
 		convertedPeriods = append(convertedPeriods,
-			&MinutePeriod{duration: period.ToMinute().Duration, key: period.ToString(),
-				period: period,
+			&MinutePeriod{
+				duration: int(ToMinute(period).Duration),
+				key:      ToString(period),
+				period:   period,
 			})
 	}
 	// Order the converted periods by duration descending: (More efficient to find the next best matching modulus)
@@ -82,41 +81,42 @@ func initLookupPeriods() {
 	}
 }
 
-func (s *Period) ToString() string {
-	return fmt.Sprintf("%d%s", s.Duration, s.PeriodType)
+func ToString(p *aedgrpc.Period) string {
+	return fmt.Sprintf("%d_%s", p.Duration, p.Type)
 }
 
 // Modulus calculations require a stable duration. Minute is the choosen base unit.
 // This function translates the period to a period in minutes
-func (s *Period) ToMinute() *Period {
+func ToMinute(p *aedgrpc.Period) *aedgrpc.Period {
 	// Dereference the pointer to get a copy of the object (Do not act on the pointer else all periods change and lookups depending on the structure will fail)
-	d := *s
-	switch s.PeriodType {
-	case "hour":
-		d.PeriodType = "minute"
-		d.Duration = s.Duration * 60
-	case "day":
-		d.PeriodType = "minute"
-		d.Duration = s.Duration * 60 * 24
-	case "week":
-		d.PeriodType = "minute"
-		d.Duration = s.Duration * 60 * 24 * 7
+	pt := aedgrpc.PeriodType_PERIOD_TYPE_MINUTE
+	d := p.Duration
+	switch p.Type {
+	case aedgrpc.PeriodType_PERIOD_TYPE_HOUR:
+		d = p.Duration * 60
+	case aedgrpc.PeriodType_PERIOD_TYPE_DAY:
+		d = p.Duration * 60 * 24
+	case aedgrpc.PeriodType_PERIOD_TYPE_WEEK:
+		d = p.Duration * 60 * 24 * 7
 	}
-	return &d
+	return &aedgrpc.Period{
+		Type:     pt,
+		Duration: d,
+	}
 }
 
-func (s *Period) offset() int64 {
-	if s.PeriodType == "week" {
+func Offset(p *aedgrpc.Period) int64 {
+	if p.Type == aedgrpc.PeriodType_PERIOD_TYPE_WEEK {
 		return 4 * int64(time.Minute) * 24 * 60 // Start the week on mondays
 	}
 	return 0
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
-func (s *Period) ToAEDKeyTimestamp(timestamp int64) int64 {
-	t := s.ToMinute()
+func ToAEDKeyTimestamp(p *aedgrpc.Period, timestamp int64) int64 {
+	t := ToMinute(p)
 	ts := timestamp - timestamp%(int64(t.Duration)*int64(time.Minute))
-	ts = ts + s.offset()
+	ts = ts + Offset(p)
 	if ts > timestamp {
 		// Correct the week calculation if the period is beyond the calculated value
 		ts = ts - int64(time.Minute*24*60*7)
@@ -125,20 +125,20 @@ func (s *Period) ToAEDKeyTimestamp(timestamp int64) int64 {
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
-func (s *Period) ToAEDKeyTimestampFrom(timestamp int64) int64 {
-	return s.ToAEDKeyTimestamp(timestamp)
+func ToAEDKeyTimestampFrom(p *aedgrpc.Period, timestamp int64) int64 {
+	return ToAEDKeyTimestamp(p, timestamp)
 }
 
 // Returns the end of the timestamp window for the given period and timestamp
-func (s *Period) ToAEDKeyTimestampTo(timestamp int64) int64 {
-	t := s.ToMinute()
-	ts := s.ToAEDKeyTimestamp(timestamp)
+func ToAEDKeyTimestampTo(p *aedgrpc.Period, timestamp int64) int64 {
+	t := ToMinute(p)
+	ts := ToAEDKeyTimestamp(p, timestamp)
 	// Set to end of period:
 	ts = ts + int64(t.Duration)*int64(time.Minute)
 	return ts
 }
 
 // Translates a string (1minute, 1hour, 3day, 1week, etc) to a period
-func StringToPeriod(period string) *Period {
+func StringToPeriod(period string) *aedgrpc.Period {
 	return PeriodsMap[period]
 }

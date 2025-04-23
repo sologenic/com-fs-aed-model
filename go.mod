@@ -5,6 +5,7 @@ go 1.23.8
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250417194121-8d91c0b8405b
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20250417194121-8d91c0b8405b
 	google.golang.org/grpc v1.71.1
 	google.golang.org/protobuf v1.36.6
 )

@@ -21,8 +21,8 @@ message AED {
 
 enum Series {
     SERIES_NOT_USED = 0;
-    OHLC = 1;
-    MARKET_DATA = 2;
+    INTERNAL_TRADES = 1; // Source: dex trades, Usage: general trade graphs, supports TradeView-like graphing tools (ohlc)
+    MARKET_DATA_STOCKS = 2; // Source: external market data provider for the general stock market (can be more than 1 provider, but only a single provider per stock)
 }
 
 message Value {
@@ -31,6 +31,7 @@ message Value {
         string ValueStr = 2;
         int64 ValueInt64 = 3;
         double ValueFloat64 = 4;
+        Period ValuePeriod = 5;
     }
 }
 
@@ -42,10 +43,22 @@ enum Field {
     CLOSE = 4;
     VOLUME = 5;
     NUMBER_OF_TRADES = 6;
-    PERIOD = 7;
-    INVERTED_VOLUME = 8;
-    MARKET_CAP = 9;
-    EPS = 10;
-    PE_RATIO = 11;
-    YIELD = 12;
+    INVERTED_VOLUME = 7;
+    MARKET_CAP = 8;
+    EPS = 9;
+    PE_RATIO = 10;
+    YIELD = 11;
+}
+
+message Period {
+    PeriodType Type = 1;
+    int32 Duration = 2; // The duration of the indicated period (e.g 1 minute, 3 minutes, etc)
+}
+
+enum PeriodType {
+    PERIOD_TYPE_DO_NOT_USE = 0;
+    PERIOD_TYPE_MINUTE = 1;
+    PERIOD_TYPE_HOUR = 2;
+    PERIOD_TYPE_DAY = 3;
+    PERIOD_TYPE_WEEK = 4;
 }
