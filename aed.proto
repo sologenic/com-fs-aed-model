@@ -4,6 +4,7 @@ package aed;
 
 option go_package = "github.com/sologenic/com-fs-aed-model;aed";
 
+import "google/protobuf/timestamp.proto";
 import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
 
 message AEDs {
@@ -11,10 +12,11 @@ message AEDs {
 }
 
 message AED {
-    metadata.Network Network = 1;
-    string OrganizationID = 15;
+    string OrganizationID = 1;
     string Symbol = 2;
-    int64 TimeStamp = 3;
+    google.protobuf.Timestamp Timestamp = 3;
+    metadata.MetaData MetaData = 4;
+
     repeated Value Value = 100;
     Series Series = 101;
 }
@@ -48,6 +50,8 @@ enum Field {
     EPS = 9;
     PE_RATIO = 10;
     YIELD = 11;
+    OPEN_TIME = 12;
+    CLOSE_TIME = 13;
 }
 
 message Period {
