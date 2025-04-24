@@ -31,6 +31,7 @@ message AEDFilter {
     bool Backfill = 7;
     // Indicates if the data is allowed to be retrieved from the cache (default: false - no cache)
     bool AllowCache = 8;
+    string OrganizationID = 9;
 }
 
 message PeriodsFilter {
