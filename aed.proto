@@ -15,7 +15,8 @@ message AED {
     string OrganizationID = 1;
     string Symbol = 2;
     google.protobuf.Timestamp Timestamp = 3;
-    metadata.MetaData MetaData = 4;
+    Period Period = 4;
+    metadata.MetaData MetaData = 5;
 
     repeated Value Value = 100;
     Series Series = 101;
@@ -33,7 +34,6 @@ message Value {
         string ValueStr = 2;
         int64 ValueInt64 = 3;
         double ValueFloat64 = 4;
-        Period ValuePeriod = 5;
     }
 }
 
