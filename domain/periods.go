@@ -6,6 +6,7 @@ import (
 	"time"
 
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // The list of periods that we want to calculate
@@ -122,6 +123,12 @@ func ToAEDKeyTimestamp(p *aedgrpc.Period, timestamp int64) int64 {
 		ts = ts - int64(time.Minute*24*60*7)
 	}
 	return ts
+}
+
+func ToAEDKeyTimestamppb(p *aedgrpc.Period, timestamp *timestamppb.Timestamp) *timestamppb.Timestamp {
+	t := timestamp.AsTime().UnixNano()
+	ts := ToAEDKeyTimestamp(p, t)
+	return timestamppb.New(time.Unix(0, ts))
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
