@@ -16,8 +16,8 @@ service AEDService {
     rpc BatchUpsert(AEDs) returns (google.protobuf.Empty) {}
     // Get a list of AED by from/to, symbol, period and network
     rpc Get(AEDFilter) returns (AEDs) {}
-    // Get ohlcs for all the given periods
-    rpc GetOHLCsForPeriods(PeriodsFilter) returns (AEDs) {}
+    // Get aeds for all the given periods
+    rpc GetAEDsForPeriods(PeriodsFilter) returns (AEDs) {}
 }
 
 message AEDFilter {

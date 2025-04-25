@@ -20,10 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AEDService_Upsert_FullMethodName             = "/aed.AEDService/Upsert"
-	AEDService_BatchUpsert_FullMethodName        = "/aed.AEDService/BatchUpsert"
-	AEDService_Get_FullMethodName                = "/aed.AEDService/Get"
-	AEDService_GetOHLCsForPeriods_FullMethodName = "/aed.AEDService/GetOHLCsForPeriods"
+	AEDService_Upsert_FullMethodName            = "/aed.AEDService/Upsert"
+	AEDService_BatchUpsert_FullMethodName       = "/aed.AEDService/BatchUpsert"
+	AEDService_Get_FullMethodName               = "/aed.AEDService/Get"
+	AEDService_GetAEDsForPeriods_FullMethodName = "/aed.AEDService/GetAEDsForPeriods"
 )
 
 // AEDServiceClient is the client API for AEDService service.
@@ -36,8 +36,8 @@ type AEDServiceClient interface {
 	BatchUpsert(ctx context.Context, in *AEDs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Get a list of AED by from/to, symbol, period and network
 	Get(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AEDs, error)
-	// Get ohlcs for all the given periods
-	GetOHLCsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error)
+	// Get aeds for all the given periods
+	GetAEDsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error)
 }
 
 type aEDServiceClient struct {
@@ -75,9 +75,9 @@ func (c *aEDServiceClient) Get(ctx context.Context, in *AEDFilter, opts ...grpc.
 	return out, nil
 }
 
-func (c *aEDServiceClient) GetOHLCsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error) {
+func (c *aEDServiceClient) GetAEDsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error) {
 	out := new(AEDs)
-	err := c.cc.Invoke(ctx, AEDService_GetOHLCsForPeriods_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, AEDService_GetAEDsForPeriods_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,8 +94,8 @@ type AEDServiceServer interface {
 	BatchUpsert(context.Context, *AEDs) (*emptypb.Empty, error)
 	// Get a list of AED by from/to, symbol, period and network
 	Get(context.Context, *AEDFilter) (*AEDs, error)
-	// Get ohlcs for all the given periods
-	GetOHLCsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error)
+	// Get aeds for all the given periods
+	GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error)
 }
 
 // UnimplementedAEDServiceServer should be embedded to have forward compatible implementations.
@@ -111,8 +111,8 @@ func (UnimplementedAEDServiceServer) BatchUpsert(context.Context, *AEDs) (*empty
 func (UnimplementedAEDServiceServer) Get(context.Context, *AEDFilter) (*AEDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedAEDServiceServer) GetOHLCsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOHLCsForPeriods not implemented")
+func (UnimplementedAEDServiceServer) GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAEDsForPeriods not implemented")
 }
 
 // UnsafeAEDServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -180,20 +180,20 @@ func _AEDService_Get_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AEDService_GetOHLCsForPeriods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AEDService_GetAEDsForPeriods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PeriodsFilter)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AEDServiceServer).GetOHLCsForPeriods(ctx, in)
+		return srv.(AEDServiceServer).GetAEDsForPeriods(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AEDService_GetOHLCsForPeriods_FullMethodName,
+		FullMethod: AEDService_GetAEDsForPeriods_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AEDServiceServer).GetOHLCsForPeriods(ctx, req.(*PeriodsFilter))
+		return srv.(AEDServiceServer).GetAEDsForPeriods(ctx, req.(*PeriodsFilter))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -218,8 +218,8 @@ var AEDService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AEDService_Get_Handler,
 		},
 		{
-			MethodName: "GetOHLCsForPeriods",
-			Handler:    _AEDService_GetOHLCsForPeriods_Handler,
+			MethodName: "GetAEDsForPeriods",
+			Handler:    _AEDService_GetAEDsForPeriods_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
