@@ -31,9 +31,9 @@ enum Series {
 message Value {
     Field Field = 1;
     oneof Value {
-        string ValueStr = 2;
-        int64 ValueInt64 = 3;
-        double ValueFloat64 = 4;
+        string Str = 2;
+        int64 Int64 = 3;
+        double Float64 = 4;
     }
 }
 
