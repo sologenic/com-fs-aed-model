@@ -30,11 +30,9 @@ enum Series {
 
 message Value {
     Field Field = 1;
-    oneof Value {
-        string Str = 2;
-        int64 Int64 = 3;
-        double Float64 = 4;
-    }
+    optional string StringVal = 2; // String value
+    optional int64 Int64Val = 3; // Integer value
+    optional double Float64Val = 4; // Float value
 }
 
 enum Field {
