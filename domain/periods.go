@@ -9,6 +9,14 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// Time unit constants
+const (
+	secondsInMinute = 60
+	secondsInHour   = 60 * 60          // 3,600
+	secondsInDay    = 24 * 60 * 60     // 86,400
+	secondsInWeek   = 7 * 24 * 60 * 60 // 604,800
+)
+
 // The list of periods that we want to calculate
 var (
 	PeriodsList       []*aedgrpc.Period
@@ -108,7 +116,7 @@ func ToMinute(p *aedgrpc.Period) *aedgrpc.Period {
 
 func Offset(p *aedgrpc.Period) int64 {
 	if p.Type == aedgrpc.PeriodType_PERIOD_TYPE_WEEK {
-		return 4 * int64(time.Minute) * 24 * 60 // Start the week on mondays
+		return 4 * secondsInDay // Start the week on mondays
 	}
 	return 0
 }
@@ -116,17 +124,17 @@ func Offset(p *aedgrpc.Period) int64 {
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
 func ToAEDKeyTimestamp(p *aedgrpc.Period, timestamp int64) int64 {
 	t := ToMinute(p)
-	ts := timestamp - timestamp%(int64(t.Duration)*int64(time.Minute))
+	ts := timestamp - timestamp%(int64(t.Duration)*secondsInMinute)
 	ts = ts + Offset(p)
 	if ts > timestamp {
 		// Correct the week calculation if the period is beyond the calculated value
-		ts = ts - int64(time.Minute*24*60*7)
+		ts = ts - secondsInWeek
 	}
 	return ts
 }
 
 func ToAEDKeyTimestamppb(p *aedgrpc.Period, timestamp *timestamppb.Timestamp) *timestamppb.Timestamp {
-	t := timestamp.AsTime().UnixNano()
+	t := timestamp.AsTime().Unix()
 	ts := ToAEDKeyTimestamp(p, t)
 	return timestamppb.New(time.Unix(0, ts))
 }
@@ -141,7 +149,7 @@ func ToAEDKeyTimestampTo(p *aedgrpc.Period, timestamp int64) int64 {
 	t := ToMinute(p)
 	ts := ToAEDKeyTimestamp(p, timestamp)
 	// Set to end of period:
-	ts = ts + int64(t.Duration)*int64(time.Minute)
+	ts = ts + int64(t.Duration)*secondsInMinute
 	return ts
 }
 
