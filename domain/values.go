@@ -5,10 +5,10 @@ import (
 )
 
 func ParseFieldValue[T any](aed *aedgrpc.AED, field aedgrpc.Field) T {
-	var zero T
+	var t T
 	for _, v := range aed.Value {
 		if v.Field == field {
-			switch any(zero).(type) {
+			switch any(t).(type) {
 			case float64:
 				if v.Float64Val != nil {
 					return any(*v.Float64Val).(T)
@@ -24,23 +24,22 @@ func ParseFieldValue[T any](aed *aedgrpc.AED, field aedgrpc.Field) T {
 			}
 		}
 	}
-	return zero
+	return t
 }
 
+// No other type check required as `CreateFieldValue` is to be used in line with the `ParseFieldValue`.
 func CreateFieldValue[T any](field aedgrpc.Field, value T) *aedgrpc.Value {
-	valueObj := &aedgrpc.Value{Field: field}
-
+	vObj := &aedgrpc.Value{Field: field}
 	switch v := any(value).(type) {
 	case float64:
 		floatVal := v
-		valueObj.Float64Val = &floatVal
+		vObj.Float64Val = &floatVal
 	case int64:
 		intVal := v
-		valueObj.Int64Val = &intVal
+		vObj.Int64Val = &intVal
 	case string:
 		strVal := v
-		valueObj.StringVal = &strVal
+		vObj.StringVal = &strVal
 	}
-
-	return valueObj
+	return vObj
 }
