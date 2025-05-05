@@ -17,6 +17,7 @@ message AED {
     google.protobuf.Timestamp Timestamp = 3;
     Period Period = 4;
     metadata.MetaData MetaData = 5;
+    optional string UserID = 6; // Time series stored at user level for profit/loss, etc
 
     repeated Value Value = 100;
     Series Series = 101;
