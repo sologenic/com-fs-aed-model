@@ -49,6 +49,8 @@ export interface AED {
     Timestamp: Date | undefined;
     Period: Period | undefined;
     MetaData: MetaData | undefined;
+    /** Time series stored at user level for profit/loss, etc */
+    UserID?: string | undefined;
     Value: Value[];
     Series: Series;
 }
@@ -86,6 +88,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -109,6 +112,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -130,6 +134,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -159,6 +164,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } & { [K_1 in Exclude<keyof I["AEDs"][number]["MetaData"], keyof MetaData>]: never; }) | undefined;
+            UserID?: string | undefined;
             Value?: ({
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -195,6 +201,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -219,6 +226,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -242,6 +250,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -263,6 +272,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -292,6 +302,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } & { [K_8 in Exclude<keyof I_1["AEDs"][number]["MetaData"], keyof MetaData>]: never; }) | undefined;
+            UserID?: string | undefined;
             Value?: ({
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -328,6 +339,7 @@ export declare const AEDs: {
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } | undefined;
+            UserID?: string | undefined;
             Value?: {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
@@ -357,6 +369,7 @@ export declare const AED: {
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } | undefined;
+        UserID?: string | undefined;
         Value?: {
             Field?: Field | undefined;
             StringVal?: string | undefined;
@@ -386,6 +399,7 @@ export declare const AED: {
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } & { [K_1 in Exclude<keyof I["MetaData"], keyof MetaData>]: never; }) | undefined;
+        UserID?: string | undefined;
         Value?: ({
             Field?: Field | undefined;
             StringVal?: string | undefined;
@@ -423,6 +437,7 @@ export declare const AED: {
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } | undefined;
+        UserID?: string | undefined;
         Value?: {
             Field?: Field | undefined;
             StringVal?: string | undefined;
@@ -452,6 +467,7 @@ export declare const AED: {
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } & { [K_6 in Exclude<keyof I_1["MetaData"], keyof MetaData>]: never; }) | undefined;
+        UserID?: string | undefined;
         Value?: ({
             Field?: Field | undefined;
             StringVal?: string | undefined;

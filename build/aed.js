@@ -259,6 +259,7 @@ function createBaseAED() {
         Timestamp: undefined,
         Period: undefined,
         MetaData: undefined,
+        UserID: undefined,
         Value: [],
         Series: 0,
     };
@@ -279,6 +280,9 @@ export const AED = {
         }
         if (message.MetaData !== undefined) {
             MetaData.encode(message.MetaData, writer.uint32(42).fork()).ldelim();
+        }
+        if (message.UserID !== undefined) {
+            writer.uint32(50).string(message.UserID);
         }
         for (const v of message.Value) {
             Value.encode(v, writer.uint32(802).fork()).ldelim();
@@ -325,6 +329,12 @@ export const AED = {
                     }
                     message.MetaData = MetaData.decode(reader, reader.uint32());
                     continue;
+                case 6:
+                    if (tag !== 50) {
+                        break;
+                    }
+                    message.UserID = reader.string();
+                    continue;
                 case 100:
                     if (tag !== 802) {
                         break;
@@ -352,6 +362,7 @@ export const AED = {
             Timestamp: isSet(object.Timestamp) ? fromJsonTimestamp(object.Timestamp) : undefined,
             Period: isSet(object.Period) ? Period.fromJSON(object.Period) : undefined,
             MetaData: isSet(object.MetaData) ? MetaData.fromJSON(object.MetaData) : undefined,
+            UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
             Value: globalThis.Array.isArray(object === null || object === void 0 ? void 0 : object.Value) ? object.Value.map((e) => Value.fromJSON(e)) : [],
             Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
         };
@@ -374,6 +385,9 @@ export const AED = {
         if (message.MetaData !== undefined) {
             obj.MetaData = MetaData.toJSON(message.MetaData);
         }
+        if (message.UserID !== undefined) {
+            obj.UserID = message.UserID;
+        }
         if ((_a = message.Value) === null || _a === void 0 ? void 0 : _a.length) {
             obj.Value = message.Value.map((e) => Value.toJSON(e));
         }
@@ -386,7 +400,7 @@ export const AED = {
         return AED.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         const message = createBaseAED();
         message.OrganizationID = (_a = object.OrganizationID) !== null && _a !== void 0 ? _a : "";
         message.Symbol = (_b = object.Symbol) !== null && _b !== void 0 ? _b : "";
@@ -397,8 +411,9 @@ export const AED = {
         message.MetaData = (object.MetaData !== undefined && object.MetaData !== null)
             ? MetaData.fromPartial(object.MetaData)
             : undefined;
-        message.Value = ((_d = object.Value) === null || _d === void 0 ? void 0 : _d.map((e) => Value.fromPartial(e))) || [];
-        message.Series = (_e = object.Series) !== null && _e !== void 0 ? _e : 0;
+        message.UserID = (_d = object.UserID) !== null && _d !== void 0 ? _d : undefined;
+        message.Value = ((_e = object.Value) === null || _e === void 0 ? void 0 : _e.map((e) => Value.fromPartial(e))) || [];
+        message.Series = (_f = object.Series) !== null && _f !== void 0 ? _f : 0;
         return message;
     },
 };

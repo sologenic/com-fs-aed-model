@@ -218,7 +218,11 @@ export interface AED {
   Symbol: string;
   Timestamp: Date | undefined;
   Period: Period | undefined;
-  MetaData: MetaData | undefined;
+  MetaData:
+    | MetaData
+    | undefined;
+  /** Time series stored at user level for profit/loss, etc */
+  UserID?: string | undefined;
   Value: Value[];
   Series: Series;
 }
@@ -307,6 +311,7 @@ function createBaseAED(): AED {
     Timestamp: undefined,
     Period: undefined,
     MetaData: undefined,
+    UserID: undefined,
     Value: [],
     Series: 0,
   };
@@ -328,6 +333,9 @@ export const AED = {
     }
     if (message.MetaData !== undefined) {
       MetaData.encode(message.MetaData, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.UserID !== undefined) {
+      writer.uint32(50).string(message.UserID);
     }
     for (const v of message.Value) {
       Value.encode(v!, writer.uint32(802).fork()).ldelim();
@@ -380,6 +388,13 @@ export const AED = {
 
           message.MetaData = MetaData.decode(reader, reader.uint32());
           continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.UserID = reader.string();
+          continue;
         case 100:
           if (tag !== 802) {
             break;
@@ -410,6 +425,7 @@ export const AED = {
       Timestamp: isSet(object.Timestamp) ? fromJsonTimestamp(object.Timestamp) : undefined,
       Period: isSet(object.Period) ? Period.fromJSON(object.Period) : undefined,
       MetaData: isSet(object.MetaData) ? MetaData.fromJSON(object.MetaData) : undefined,
+      UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
       Value: globalThis.Array.isArray(object?.Value) ? object.Value.map((e: any) => Value.fromJSON(e)) : [],
       Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
     };
@@ -431,6 +447,9 @@ export const AED = {
     }
     if (message.MetaData !== undefined) {
       obj.MetaData = MetaData.toJSON(message.MetaData);
+    }
+    if (message.UserID !== undefined) {
+      obj.UserID = message.UserID;
     }
     if (message.Value?.length) {
       obj.Value = message.Value.map((e) => Value.toJSON(e));
@@ -455,6 +474,7 @@ export const AED = {
     message.MetaData = (object.MetaData !== undefined && object.MetaData !== null)
       ? MetaData.fromPartial(object.MetaData)
       : undefined;
+    message.UserID = object.UserID ?? undefined;
     message.Value = object.Value?.map((e) => Value.fromPartial(e)) || [];
     message.Series = object.Series ?? 0;
     return message;

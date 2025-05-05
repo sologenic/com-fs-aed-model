@@ -4,7 +4,11 @@ import (
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 )
 
-func ParseFieldValue[T any](aed *aedgrpc.AED, field aedgrpc.Field) T {
+type FieldValue interface {
+	~string | ~float64 | ~int64
+}
+
+func ParseFieldValue[T FieldValue](aed *aedgrpc.AED, field aedgrpc.Field) T {
 	var t T
 	for _, v := range aed.Value {
 		if v.Field == field {
@@ -28,18 +32,15 @@ func ParseFieldValue[T any](aed *aedgrpc.AED, field aedgrpc.Field) T {
 }
 
 // No other type check required as `CreateFieldValue` is to be used in line with the `ParseFieldValue`.
-func CreateFieldValue[T any](field aedgrpc.Field, value T) *aedgrpc.Value {
+func CreateFieldValue[T FieldValue](field aedgrpc.Field, value T) *aedgrpc.Value {
 	vObj := &aedgrpc.Value{Field: field}
 	switch v := any(value).(type) {
 	case float64:
-		floatVal := v
-		vObj.Float64Val = &floatVal
+		vObj.Float64Val = &v
 	case int64:
-		intVal := v
-		vObj.Int64Val = &intVal
+		vObj.Int64Val = &v
 	case string:
-		strVal := v
-		vObj.StringVal = &strVal
+		vObj.StringVal = &v
 	}
 	return vObj
 }
