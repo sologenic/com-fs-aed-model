@@ -1,11 +1,12 @@
 package domain
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"regexp"
 	"strconv"
 
+	dec "github.com/shopspring/decimal"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 )
 
@@ -28,8 +29,6 @@ var allowedValues = map[string]bool{
 
 var (
 	periodRegex = regexp.MustCompile(`^(\d+)([a-zA-Z]+)$`)
-	// Errors
-	ErrIncorrectRequestParm = errors.New("incorrect request parameter")
 )
 
 // Input: ["1m","3m","5m","15m","30m","1h","3h","6h","12h","1d","3d","1w"]
@@ -243,4 +242,50 @@ func SetStringValue(aed *aedgrpc.AED, field aedgrpc.Field, value string) {
 		Field:     field,
 		StringVal: &value,
 	})
+}
+
+/*
+AED data is stored in the subunit price and volume notation of the orders.
+This function converts the subunit price and volume to human readable price and volume.
+*/
+func NormalizeAED(ctx context.Context, aed *aedgrpc.AED, organizationID string, basePrecision, quotePrecision int64) (*aedgrpc.AED, error) {
+	// Price is in subunit notation (subunitBase/subunitQuote)
+	// We need the prices in unit notation: (base/quote) => price * 10^basePrecision/10^quotePrecision
+	mult := dec.New(1, int32(basePrecision)).Div(dec.New(1, int32(quotePrecision))).InexactFloat64()
+	// Get current values
+	closeVal := ParseFieldValue[float64](aed, aedgrpc.Field_CLOSE)
+	openVal := ParseFieldValue[float64](aed, aedgrpc.Field_OPEN)
+	highVal := ParseFieldValue[float64](aed, aedgrpc.Field_HIGH)
+	lowVal := ParseFieldValue[float64](aed, aedgrpc.Field_LOW)
+	volumeVal := ParseFieldValue[float64](aed, aedgrpc.Field_VOLUME)
+	invVolumeVal := ParseFieldValue[float64](aed, aedgrpc.Field_INVERTED_VOLUME) // For quote volume
+
+	// Apply normalization
+	for _, v := range aed.Value {
+		switch v.Field {
+		case aedgrpc.Field_CLOSE:
+			normalizedVal := closeVal * mult
+			v.Float64Val = &normalizedVal
+		case aedgrpc.Field_OPEN:
+			normalizedVal := openVal * mult
+			v.Float64Val = &normalizedVal
+		case aedgrpc.Field_HIGH:
+			normalizedVal := highVal * mult
+			v.Float64Val = &normalizedVal
+		case aedgrpc.Field_LOW:
+			normalizedVal := lowVal * mult
+			v.Float64Val = &normalizedVal
+		case aedgrpc.Field_VOLUME:
+			// Volume is in subunit notation
+			// We need the volume in unit notation: volume * 10^-basePrecision
+			normalizedVal := volumeVal * dec.New(1, int32(-basePrecision)).InexactFloat64()
+			v.Float64Val = &normalizedVal
+		case aedgrpc.Field_INVERTED_VOLUME:
+			// Inverted volume is in subunit notation
+			// We need the quote volume in unit notation: volume * 10^-quotePrecision
+			normalizedVal := invVolumeVal * dec.New(1, int32(-quotePrecision)).InexactFloat64()
+			v.Float64Val = &normalizedVal
+		}
+	}
+	return aed, nil
 }
