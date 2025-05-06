@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ticker;
+
+option go_package = "github.com/sologenic/com-fs-aed-model/domain/ticker;ticker";
+
+message TickerPoint {
+    string Symbol = 1;
+    int64 OpenTime = 2;
+    int64 CloseTime = 3;
+    double OpenPrice = 4;
+    double HighPrice = 5;
+    double LowPrice = 6;
+    double LastPrice = 7; // Actual first trade in the time window
+    double FirstPrice = 8; // Actual last trade in the time window
+    // Based on the order of the currencies in the symbol the volume and invertedVolume are calculated.
+    double Volume = 9;
+    double InvertedVolume = 10;
+    bool Inverted = 11; // Indicates if the original symbol was inverted
+    double MarketCap = 12;
+    double EPS = 13;
+    double PERatio = 14;
+    double Yield = 15;
+}
+
+message TickerResponse {
+    repeated TickerPoint Tickers = 1;
+}
