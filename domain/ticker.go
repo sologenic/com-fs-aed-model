@@ -1,15 +1,13 @@
-package ticker
+package domain
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	sync "sync"
 	"time"
 
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
-	aedgrpcdmn "github.com/sologenic/com-fs-aed-model/domain"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetdmn "github.com/sologenic/com-fs-asset-model/domain"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
@@ -20,26 +18,44 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var (
-	ErrTickerEmptySymbols   = errors.New("no symbols provided")
-	ErrTickerTooManySymbols = errors.New("too many symbols requested")
-	ErrSymbolInvalid        = errors.New("invalid symbol format")
-)
-
 const (
 	MaxTickerSymbolsNumber = 40
 	DefaultTickerPeriod    = 24 * time.Hour
 	DefaultCacheDuration   = 1 * time.Minute
 )
 
+type TickerPoint struct {
+	Symbol     string
+	OpenTime   int64
+	CloseTime  int64
+	OpenPrice  float64
+	HighPrice  float64
+	LowPrice   float64
+	LastPrice  float64 // Actual first trade in the time window
+	FirstPrice float64 // Actual last trade in the time window
+	// Based on the order of the currencies in the symbol the volume and invertedVolume are calculated.
+	Volume         float64
+	InvertedVolume float64
+	Inverted       bool // Indicates if the original symbol was inverted
+	MarketCap      float64
+	EPS            float64
+	PERatio        float64
+	Yield          float64
+}
+
+type Tickers map[string]*TickerPoint
+
+type TickerResponse struct {
+	Tickers []*TickerPoint `json:"tickers"`
+}
+
+// Currently only 24h tickers are used.
 type TickerReadOptions struct {
 	Symbols []string
 	To      time.Time
 	Period  time.Duration
 	Network metadata.Network
 }
-
-type Tickers map[string]*TickerPoint
 
 type Cache struct {
 	Mutex *sync.RWMutex
@@ -54,7 +70,7 @@ func NewTickerReadOptions(symbols []string, to time.Time, period time.Duration) 
 	}
 }
 
-func (opt *TickerReadOptions) Validate() error {
+func (opt *TickerReadOptions) Validate() Error {
 	if len(opt.Symbols) == 0 {
 		return ErrTickerEmptySymbols
 	} else if len(opt.Symbols) > MaxTickerSymbolsNumber {
@@ -82,11 +98,12 @@ func uniqueSymbols(symbols []string) []string {
 	return res
 }
 
-func validSymbol(symbol string) bool {
-	_, err := assetdmnsymbol.NewSymbolFromString(symbol)
+func validSymbol(strSymbol string) bool {
+	_, err := assetdmnsymbol.NewSymbolFromString(strSymbol)
 	return err == nil
 }
 
+// GetTickers retrieves tickers for the specified options
 func GetTickers(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
@@ -98,6 +115,14 @@ func GetTickers(
 	retvals := getTickers(ctx, aedClient, assetClient, opt, organizationID, c)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
+}
+
+func (t *Tickers) ToResponse() *TickerResponse {
+	tickers := make([]*TickerPoint, 0, len(*t))
+	for _, ticker := range *t {
+		tickers = append(tickers, ticker)
+	}
+	return &TickerResponse{Tickers: tickers}
 }
 
 // Tickers to http evaluates the symbols to be either non inverted or inverted and switches the volume and invertedVolume accordingly
@@ -163,7 +188,7 @@ func getTickers(
 	return (*Tickers)(&tickersResp)
 }
 
-// Retrieve the AED data from the source
+// getAED retrieves AED data from the source
 func getAED(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
@@ -202,6 +227,7 @@ func getAED(
 	return baseAEDs, nil
 }
 
+// normalizeAED normalizes AED data based on asset precisions
 func normalizeAED(
 	ctx context.Context,
 	assetClient assetgrpc.AssetListServiceClient,
@@ -227,7 +253,7 @@ func normalizeAED(
 		return nil, fmt.Errorf("failed to fetch quote precision for %v: %w", symbol.Quote, err)
 	}
 
-	return aedgrpcdmn.NormalizeAED(
+	return NormalizeAED(
 		ctx,
 		aed,
 		organizationID,
@@ -268,16 +294,16 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *TickerP
 	var tStart, tEnd time.Time
 	for _, baseAEDs := range AEDs.AEDs {
 		// Extract values using helper functions
-		lowVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_LOW)
-		highVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_HIGH)
-		volumeVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_VOLUME)
-		invertedVolumeVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_INVERTED_VOLUME)
-		openVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_OPEN)
-		closeVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_CLOSE)
-		marketCapVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_MARKET_CAP)
-		epsVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_EPS)
-		perVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_PE_RATIO)
-		yieldVal := aedgrpcdmn.GetFloatValue(baseAEDs, aedgrpc.Field_YIELD)
+		lowVal := GetFloatValue(baseAEDs, aedgrpc.Field_LOW)
+		highVal := GetFloatValue(baseAEDs, aedgrpc.Field_HIGH)
+		volumeVal := GetFloatValue(baseAEDs, aedgrpc.Field_VOLUME)
+		invertedVolumeVal := GetFloatValue(baseAEDs, aedgrpc.Field_INVERTED_VOLUME)
+		openVal := GetFloatValue(baseAEDs, aedgrpc.Field_OPEN)
+		closeVal := GetFloatValue(baseAEDs, aedgrpc.Field_CLOSE)
+		marketCapVal := GetFloatValue(baseAEDs, aedgrpc.Field_MARKET_CAP)
+		epsVal := GetFloatValue(baseAEDs, aedgrpc.Field_EPS)
+		perVal := GetFloatValue(baseAEDs, aedgrpc.Field_PE_RATIO)
+		yieldVal := GetFloatValue(baseAEDs, aedgrpc.Field_YIELD)
 
 		if low == 0.0 || low > lowVal {
 			low = lowVal
@@ -305,8 +331,8 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *TickerP
 			per = perVal
 			yield = yieldVal
 		}
-
 	}
+
 	// The calculated values might cover the requested time period or might be from before the requested time period:
 	// If they are from before the requested time period, volume is 0, high, low and close are the same as the open.
 	if tStart.Before(fromTime) {
@@ -335,14 +361,4 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *TickerP
 		Yield:          yield,
 	}
 	return t
-}
-
-func (t *Tickers) ToResponse() *TickerResponse {
-	resp := &TickerResponse{
-		Tickers: make([]*TickerPoint, 0, len(*t)),
-	}
-	for _, ticker := range *t {
-		resp.Tickers = append(resp.Tickers, ticker)
-	}
-	return resp
 }
