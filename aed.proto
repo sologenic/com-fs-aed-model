@@ -34,6 +34,7 @@ message Value {
     optional string StringVal = 2; // String value
     optional int64 Int64Val = 3; // Integer value
     optional double Float64Val = 4; // Float value
+    optional bool BoolVal = 5; // Boolean value
 }
 
 enum Field {
@@ -51,6 +52,9 @@ enum Field {
     YIELD = 11;
     OPEN_TIME = 12;
     CLOSE_TIME = 13;
+    INVERTED = 14;       // Indicates if the symbol was inverted
+    FIRST_PRICE = 15;    // First price in the time window
+    LAST_PRICE = 16;     // Last price in the time window
 }
 
 message Period {
