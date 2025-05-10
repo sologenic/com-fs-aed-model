@@ -24,29 +24,10 @@ const (
 	DefaultCacheDuration   = 1 * time.Minute
 )
 
-type TickerPoint struct {
-	Symbol     string
-	OpenTime   int64
-	CloseTime  int64
-	OpenPrice  float64
-	HighPrice  float64
-	LowPrice   float64
-	LastPrice  float64 // Actual first trade in the time window
-	FirstPrice float64 // Actual last trade in the time window
-	// Based on the order of the currencies in the symbol the volume and invertedVolume are calculated.
-	Volume         float64
-	InvertedVolume float64
-	Inverted       bool // Indicates if the original symbol was inverted
-	MarketCap      float64
-	EPS            float64
-	PERatio        float64
-	Yield          float64
-}
-
-type Tickers map[string]*TickerPoint
+type Tickers map[string]*aedgrpc.AED
 
 type TickerResponse struct {
-	Tickers []*TickerPoint `json:"tickers"`
+	Tickers []*aedgrpc.AED `json:"tickers"`
 }
 
 // Currently only 24h tickers are used.
@@ -118,7 +99,7 @@ func GetTickers(
 }
 
 func (t *Tickers) ToResponse() *TickerResponse {
-	tickers := make([]*TickerPoint, 0, len(*t))
+	tickers := make([]*aedgrpc.AED, 0, len(*t))
 	for _, ticker := range *t {
 		tickers = append(tickers, ticker)
 	}
@@ -154,7 +135,7 @@ func getTickers(
 	c *Cache,
 ) *Tickers {
 	// Retrieve the tickers from the AED service:
-	tickerPoints := make(map[string]*TickerPoint)
+	tickerAEDs := make(map[string]*aedgrpc.AED)
 
 	AEDs := make([]*aedgrpc.AEDs, 0, len(opt.Symbols))
 	var mutex sync.Mutex
@@ -163,8 +144,8 @@ func getTickers(
 		// Cache check for the symbol:
 		c.Mutex.RLock()
 		if cache, ok := c.Data[symbol]; ok {
-			v := cache.Value.(*TickerPoint)
-			tickerPoints[symbol] = v
+			v := cache.Value.(*aedgrpc.AED) // Changed from *TickerPoint to *aedgrpc.AED
+			tickerAEDs[symbol] = v
 			c.Mutex.RUnlock()
 			continue
 		}
@@ -184,7 +165,7 @@ func getTickers(
 		}(symbol)
 	}
 	wg.Wait()
-	tickersResp := AEDsToTickers(AEDs, opt, tickerPoints, c)
+	tickersResp := AEDsToTickers(AEDs, opt, tickerAEDs, c)
 	return (*Tickers)(&tickersResp)
 }
 
@@ -265,23 +246,23 @@ func normalizeAED(
 // AEDsToTickers converts the aed data to ticker data
 // The values calculated are cached for refreshInterval max (clock rounded to refreshInterval intervals) with an allowed stale period of 5s, giving an always retrieval of values
 // from the cache for performance and data cost reasons (we can refresh in a go blocking routine while the data is still being served quickly)
-func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerPoints map[string]*TickerPoint, c *Cache) map[string]*TickerPoint {
+func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, c *Cache) map[string]*aedgrpc.AED {
 	for _, aed := range AEDs {
-		tickerPoint := calculateTickerAED(aed, domainOptions)
-		tickerPoints[aed.AEDs[0].Symbol] = tickerPoint
+		tickerAED := calculateTickerAED(aed, domainOptions)
+		tickerAEDs[aed.AEDs[0].Symbol] = tickerAED
 		c.Mutex.Lock()
 		c.Data[aed.AEDs[0].Symbol] = &utilcache.LockableCache{
-			Value:       tickerPoint,
+			Value:       tickerAED,
 			LastUpdated: time.Now(),
 		}
 		c.Mutex.Unlock()
 	}
-	return tickerPoints
+	return tickerAEDs
 }
 
 // calculate the open, high, low, close, volume and invertedVolume
 // Returns a single AED with the calculated values.
-func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *TickerPoint {
+func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc.AED {
 	if len(AEDs.AEDs) == 0 {
 		return nil
 	}
@@ -344,21 +325,34 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *TickerP
 		invertedVolume = 0.0
 	}
 
-	t := &TickerPoint{
+	tickerAED := &aedgrpc.AED{
 		Symbol:         AEDs.AEDs[0].Symbol,
-		OpenTime:       fromTime.Unix(),
-		CloseTime:      options.To.Unix(),
-		OpenPrice:      open,
-		HighPrice:      high,
-		LowPrice:       low,
-		LastPrice:      close,
-		FirstPrice:     firstPrice,
-		Volume:         volume,
-		InvertedVolume: invertedVolume,
-		MarketCap:      marketCap,
-		EPS:            eps,
-		PERatio:        per,
-		Yield:          yield,
+		OrganizationID: AEDs.AEDs[0].OrganizationID,
+		Timestamp:      timestamppb.New(options.To),
+		Period: &aedgrpc.Period{
+			Type:     aedgrpc.PeriodType_PERIOD_TYPE_DAY,
+			Duration: int32(options.Period.Hours() / 24),
+		},
+		MetaData: AEDs.AEDs[0].MetaData,
+		Series:   AEDs.AEDs[0].Series,
+		Value:    []*aedgrpc.Value{},
 	}
-	return t
+
+	// Set values equivalent to TickerPoint fields
+	SetFloatValue(tickerAED, aedgrpc.Field_OPEN, open)
+	SetFloatValue(tickerAED, aedgrpc.Field_HIGH, high)
+	SetFloatValue(tickerAED, aedgrpc.Field_LOW, low)
+	SetFloatValue(tickerAED, aedgrpc.Field_CLOSE, close)
+	SetFloatValue(tickerAED, aedgrpc.Field_LAST_PRICE, close)
+	SetFloatValue(tickerAED, aedgrpc.Field_FIRST_PRICE, firstPrice)
+	SetFloatValue(tickerAED, aedgrpc.Field_VOLUME, volume)
+	SetFloatValue(tickerAED, aedgrpc.Field_INVERTED_VOLUME, invertedVolume)
+	SetIntValue(tickerAED, aedgrpc.Field_OPEN_TIME, fromTime.Unix())
+	SetIntValue(tickerAED, aedgrpc.Field_CLOSE_TIME, options.To.Unix())
+	SetBoolValue(tickerAED, aedgrpc.Field_INVERTED, false)
+	SetFloatValue(tickerAED, aedgrpc.Field_MARKET_CAP, marketCap)
+	SetFloatValue(tickerAED, aedgrpc.Field_EPS, eps)
+	SetFloatValue(tickerAED, aedgrpc.Field_PE_RATIO, per)
+	SetFloatValue(tickerAED, aedgrpc.Field_YIELD, yield)
+	return tickerAED
 }
