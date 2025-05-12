@@ -64,12 +64,10 @@ export var Field;
     Field[Field["YIELD"] = 11] = "YIELD";
     Field[Field["OPEN_TIME"] = 12] = "OPEN_TIME";
     Field[Field["CLOSE_TIME"] = 13] = "CLOSE_TIME";
-    /** INVERTED - Indicates if the symbol was inverted */
-    Field[Field["INVERTED"] = 14] = "INVERTED";
     /** FIRST_PRICE - First price in the time window */
-    Field[Field["FIRST_PRICE"] = 15] = "FIRST_PRICE";
+    Field[Field["FIRST_PRICE"] = 14] = "FIRST_PRICE";
     /** LAST_PRICE - Last price in the time window */
-    Field[Field["LAST_PRICE"] = 16] = "LAST_PRICE";
+    Field[Field["LAST_PRICE"] = 15] = "LAST_PRICE";
     Field[Field["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(Field || (Field = {}));
 export function fieldFromJSON(object) {
@@ -117,12 +115,9 @@ export function fieldFromJSON(object) {
         case "CLOSE_TIME":
             return Field.CLOSE_TIME;
         case 14:
-        case "INVERTED":
-            return Field.INVERTED;
-        case 15:
         case "FIRST_PRICE":
             return Field.FIRST_PRICE;
-        case 16:
+        case 15:
         case "LAST_PRICE":
             return Field.LAST_PRICE;
         case -1:
@@ -161,8 +156,6 @@ export function fieldToJSON(object) {
             return "OPEN_TIME";
         case Field.CLOSE_TIME:
             return "CLOSE_TIME";
-        case Field.INVERTED:
-            return "INVERTED";
         case Field.FIRST_PRICE:
             return "FIRST_PRICE";
         case Field.LAST_PRICE:

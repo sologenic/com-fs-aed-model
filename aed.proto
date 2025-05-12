@@ -52,9 +52,8 @@ enum Field {
     YIELD = 11;
     OPEN_TIME = 12;
     CLOSE_TIME = 13;
-    INVERTED = 14;       // Indicates if the symbol was inverted
-    FIRST_PRICE = 15;    // First price in the time window
-    LAST_PRICE = 16;     // Last price in the time window
+    FIRST_PRICE = 14;    // First price in the time window
+    LAST_PRICE = 15;     // Last price in the time window
 }
 
 message Period {

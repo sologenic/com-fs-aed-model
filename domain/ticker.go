@@ -349,7 +349,6 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc
 	SetFloatValue(tickerAED, aedgrpc.Field_INVERTED_VOLUME, invertedVolume)
 	SetIntValue(tickerAED, aedgrpc.Field_OPEN_TIME, fromTime.Unix())
 	SetIntValue(tickerAED, aedgrpc.Field_CLOSE_TIME, options.To.Unix())
-	SetBoolValue(tickerAED, aedgrpc.Field_INVERTED, false)
 	SetFloatValue(tickerAED, aedgrpc.Field_MARKET_CAP, marketCap)
 	SetFloatValue(tickerAED, aedgrpc.Field_EPS, eps)
 	SetFloatValue(tickerAED, aedgrpc.Field_PE_RATIO, per)

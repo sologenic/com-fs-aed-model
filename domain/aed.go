@@ -190,15 +190,6 @@ func GetIntValue(aed *aedgrpc.AED, field aedgrpc.Field) int64 {
 	return 0
 }
 
-func GetBoolValue(aed *aedgrpc.AED, field aedgrpc.Field) bool {
-	for _, v := range aed.Value {
-		if v.Field == field && v.BoolVal != nil {
-			return *v.BoolVal
-		}
-	}
-	return false
-}
-
 func GetStringValue(aed *aedgrpc.AED, field aedgrpc.Field) string {
 	for _, v := range aed.Value {
 		if v.Field == field && v.StringVal != nil {
@@ -235,22 +226,6 @@ func SetIntValue(aed *aedgrpc.AED, field aedgrpc.Field, value int64) {
 	aed.Value = append(aed.Value, &aedgrpc.Value{
 		Field:    field,
 		Int64Val: &value,
-	})
-}
-
-func SetBoolValue(aed *aedgrpc.AED, field aedgrpc.Field, value bool) {
-	for _, v := range aed.Value {
-		if v.Field == field {
-			v.BoolVal = &value
-			v.Float64Val = nil
-			v.Int64Val = nil
-			v.StringVal = nil
-			return
-		}
-	}
-	aed.Value = append(aed.Value, &aedgrpc.Value{
-		Field:   field,
-		BoolVal: &value,
 	})
 }
 

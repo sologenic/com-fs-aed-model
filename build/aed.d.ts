@@ -26,12 +26,10 @@ export declare enum Field {
     YIELD = 11,
     OPEN_TIME = 12,
     CLOSE_TIME = 13,
-    /** INVERTED - Indicates if the symbol was inverted */
-    INVERTED = 14,
     /** FIRST_PRICE - First price in the time window */
-    FIRST_PRICE = 15,
+    FIRST_PRICE = 14,
     /** LAST_PRICE - Last price in the time window */
-    LAST_PRICE = 16,
+    LAST_PRICE = 15,
     UNRECOGNIZED = -1
 }
 export declare function fieldFromJSON(object: any): Field;

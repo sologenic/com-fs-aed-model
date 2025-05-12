@@ -68,12 +68,10 @@ export enum Field {
   YIELD = 11,
   OPEN_TIME = 12,
   CLOSE_TIME = 13,
-  /** INVERTED - Indicates if the symbol was inverted */
-  INVERTED = 14,
   /** FIRST_PRICE - First price in the time window */
-  FIRST_PRICE = 15,
+  FIRST_PRICE = 14,
   /** LAST_PRICE - Last price in the time window */
-  LAST_PRICE = 16,
+  LAST_PRICE = 15,
   UNRECOGNIZED = -1,
 }
 
@@ -122,12 +120,9 @@ export function fieldFromJSON(object: any): Field {
     case "CLOSE_TIME":
       return Field.CLOSE_TIME;
     case 14:
-    case "INVERTED":
-      return Field.INVERTED;
-    case 15:
     case "FIRST_PRICE":
       return Field.FIRST_PRICE;
-    case 16:
+    case 15:
     case "LAST_PRICE":
       return Field.LAST_PRICE;
     case -1:
@@ -167,8 +162,6 @@ export function fieldToJSON(object: Field): string {
       return "OPEN_TIME";
     case Field.CLOSE_TIME:
       return "CLOSE_TIME";
-    case Field.INVERTED:
-      return "INVERTED";
     case Field.FIRST_PRICE:
       return "FIRST_PRICE";
     case Field.LAST_PRICE:
