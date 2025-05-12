@@ -26,6 +26,10 @@ export declare enum Field {
     YIELD = 11,
     OPEN_TIME = 12,
     CLOSE_TIME = 13,
+    /** FIRST_PRICE - First price in the time window */
+    FIRST_PRICE = 14,
+    /** LAST_PRICE - Last price in the time window */
+    LAST_PRICE = 15,
     UNRECOGNIZED = -1
 }
 export declare function fieldFromJSON(object: any): Field;
@@ -62,6 +66,8 @@ export interface Value {
     Int64Val?: number | undefined;
     /** Float value */
     Float64Val?: number | undefined;
+    /** Boolean value */
+    BoolVal?: boolean | undefined;
 }
 export interface Period {
     Type: PeriodType;
@@ -94,6 +100,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[] | undefined;
@@ -118,6 +125,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[] & ({
@@ -140,6 +148,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         } & {
@@ -170,21 +179,25 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] & ({
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             } & {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             } & { [K_2 in Exclude<keyof I["AEDs"][number]["Value"][number], keyof Value>]: never; })[] & { [K_3 in Exclude<keyof I["AEDs"][number]["Value"], keyof {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[]>]: never; }) | undefined;
             Series?: Series | undefined;
         } & { [K_4 in Exclude<keyof I["AEDs"][number], keyof AED>]: never; })[] & { [K_5 in Exclude<keyof I["AEDs"], keyof {
@@ -207,6 +220,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[]>]: never; }) | undefined;
@@ -232,6 +246,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[] | undefined;
@@ -256,6 +271,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[] & ({
@@ -278,6 +294,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         } & {
@@ -308,21 +325,25 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] & ({
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             } & {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             } & { [K_9 in Exclude<keyof I_1["AEDs"][number]["Value"][number], keyof Value>]: never; })[] & { [K_10 in Exclude<keyof I_1["AEDs"][number]["Value"], keyof {
                 Field?: Field | undefined;
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[]>]: never; }) | undefined;
             Series?: Series | undefined;
         } & { [K_11 in Exclude<keyof I_1["AEDs"][number], keyof AED>]: never; })[] & { [K_12 in Exclude<keyof I_1["AEDs"], keyof {
@@ -345,6 +366,7 @@ export declare const AEDs: {
                 StringVal?: string | undefined;
                 Int64Val?: number | undefined;
                 Float64Val?: number | undefined;
+                BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
         }[]>]: never; }) | undefined;
@@ -375,6 +397,7 @@ export declare const AED: {
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[] | undefined;
         Series?: Series | undefined;
     } & {
@@ -405,21 +428,25 @@ export declare const AED: {
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[] & ({
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         } & {
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         } & { [K_2 in Exclude<keyof I["Value"][number], keyof Value>]: never; })[] & { [K_3 in Exclude<keyof I["Value"], keyof {
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[]>]: never; }) | undefined;
         Series?: Series | undefined;
     } & { [K_4 in Exclude<keyof I, keyof AED>]: never; }>(base?: I | undefined): AED;
@@ -443,6 +470,7 @@ export declare const AED: {
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[] | undefined;
         Series?: Series | undefined;
     } & {
@@ -473,21 +501,25 @@ export declare const AED: {
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[] & ({
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         } & {
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         } & { [K_7 in Exclude<keyof I_1["Value"][number], keyof Value>]: never; })[] & { [K_8 in Exclude<keyof I_1["Value"], keyof {
             Field?: Field | undefined;
             StringVal?: string | undefined;
             Int64Val?: number | undefined;
             Float64Val?: number | undefined;
+            BoolVal?: boolean | undefined;
         }[]>]: never; }) | undefined;
         Series?: Series | undefined;
     } & { [K_9 in Exclude<keyof I_1, keyof AED>]: never; }>(object: I_1): AED;
@@ -502,22 +534,26 @@ export declare const Value: {
         StringVal?: string | undefined;
         Int64Val?: number | undefined;
         Float64Val?: number | undefined;
+        BoolVal?: boolean | undefined;
     } & {
         Field?: Field | undefined;
         StringVal?: string | undefined;
         Int64Val?: number | undefined;
         Float64Val?: number | undefined;
+        BoolVal?: boolean | undefined;
     } & { [K in Exclude<keyof I, keyof Value>]: never; }>(base?: I | undefined): Value;
     fromPartial<I_1 extends {
         Field?: Field | undefined;
         StringVal?: string | undefined;
         Int64Val?: number | undefined;
         Float64Val?: number | undefined;
+        BoolVal?: boolean | undefined;
     } & {
         Field?: Field | undefined;
         StringVal?: string | undefined;
         Int64Val?: number | undefined;
         Float64Val?: number | undefined;
+        BoolVal?: boolean | undefined;
     } & { [K_1 in Exclude<keyof I_1, keyof Value>]: never; }>(object: I_1): Value;
 };
 export declare const Period: {
