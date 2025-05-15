@@ -5,17 +5,14 @@ go 1.23.8
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-asset-model v0.0.0-20250430175832-81d20906dca7
-	github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250502172059-baf86ddc0d0a
+	github.com/sologenic/com-fs-asset-model v0.0.0-20250508184733-d8ee0ffbf5d5
+	github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515230819-64335ed9d778
 	github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250417194121-8d91c0b8405b
 	github.com/sologenic/com-fs-utils-lib/go/logger v0.0.0-20240906214824-8118c42c5b35
 	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20250417194121-8d91c0b8405b
 	google.golang.org/grpc v1.71.1
 	google.golang.org/protobuf v1.36.6
 )
-
-// TODO: Remove the replace directive when the com-fs-asset-model module is published
-replace github.com/sologenic/com-fs-asset-model => ../com-fs-asset-model
 
 require (
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
