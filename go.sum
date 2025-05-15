@@ -70,6 +70,8 @@ github.com/sologenic/com-fs-asset-model v0.0.0-20250508184733-d8ee0ffbf5d5 h1:bs
 github.com/sologenic/com-fs-asset-model v0.0.0-20250508184733-d8ee0ffbf5d5/go.mod h1:yCOjh7CVnbYQJBMGM079lstEnJNzH0BFWcN6qC/yYWI=
 github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515195811-04242bc29a9d h1:eTYmb5xEXbjOQZPW+lCf0QjiCBirn4+HZZ75BrOn6ew=
 github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515195811-04242bc29a9d/go.mod h1:fY5hKYqyDU71Jol5dgPF5RYmpu4H2YqXhd++X8uPmEA=
+github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515230819-64335ed9d778 h1:j2TgyQj9AxfKPHBXrrRiPW/t5fIGzr4MUGeEbAD8uDY=
+github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515230819-64335ed9d778/go.mod h1:fY5hKYqyDU71Jol5dgPF5RYmpu4H2YqXhd++X8uPmEA=
 github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250417194121-8d91c0b8405b h1:k1UleO5GdkdXVlGnHPEx7g45MUHTG0nTRe1fd2kxjX4=
 github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250417194121-8d91c0b8405b/go.mod h1:CP73V5ZmuGgngRuQbBTmVNusvVmF7kRKeRz85P61o8M=
 github.com/sologenic/com-fs-utils-lib/go/logger v0.0.0-20240906214824-8118c42c5b35 h1:zIv/s+nyS0WREsCCVMY0dTbSRjs8+nkS/B3eFqJI7uk=
