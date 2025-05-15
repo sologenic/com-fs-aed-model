@@ -38,11 +38,6 @@ type TickerReadOptions struct {
 	Network metadata.Network
 }
 
-type Cache struct {
-	Mutex *sync.RWMutex
-	Data  map[string]*utilcache.LockableCache
-}
-
 func NewTickerReadOptions(symbols []string, to time.Time, period time.Duration) *TickerReadOptions {
 	return &TickerReadOptions{
 		Symbols: uniqueSymbols(symbols),
@@ -91,7 +86,7 @@ func GetTickers(
 	assetClient assetgrpc.AssetListServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
-	c *Cache,
+	c *utilcache.Cache,
 ) *TickerResponse {
 	retvals := getTickers(ctx, aedClient, assetClient, opt, organizationID, c)
 	tickers := tickersToHTTP(retvals, opt)
@@ -132,7 +127,7 @@ func getTickers(
 	assetClient assetgrpc.AssetListServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
-	c *Cache,
+	c *utilcache.Cache,
 ) *Tickers {
 	// Retrieve the tickers from the AED service:
 	tickerAEDs := make(map[string]*aedgrpc.AED)
@@ -246,7 +241,7 @@ func normalizeAED(
 // AEDsToTickers converts the aed data to ticker data
 // The values calculated are cached for refreshInterval max (clock rounded to refreshInterval intervals) with an allowed stale period of 5s, giving an always retrieval of values
 // from the cache for performance and data cost reasons (we can refresh in a go blocking routine while the data is still being served quickly)
-func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, c *Cache) map[string]*aedgrpc.AED {
+func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, c *utilcache.Cache) map[string]*aedgrpc.AED {
 	for _, aed := range AEDs {
 		tickerAED := calculateTickerAED(aed, domainOptions)
 		tickerAEDs[aed.AEDs[0].Symbol] = tickerAED
