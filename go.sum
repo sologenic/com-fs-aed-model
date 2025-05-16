@@ -68,8 +68,6 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
 github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
 github.com/sologenic/com-fs-asset-model v0.0.0-20250508184733-d8ee0ffbf5d5 h1:bs2mpeVyZSwpcPel/2i9l2UOr/9XuPTPrpxwqOdgtjg=
 github.com/sologenic/com-fs-asset-model v0.0.0-20250508184733-d8ee0ffbf5d5/go.mod h1:yCOjh7CVnbYQJBMGM079lstEnJNzH0BFWcN6qC/yYWI=
-github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515195811-04242bc29a9d h1:eTYmb5xEXbjOQZPW+lCf0QjiCBirn4+HZZ75BrOn6ew=
-github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515195811-04242bc29a9d/go.mod h1:fY5hKYqyDU71Jol5dgPF5RYmpu4H2YqXhd++X8uPmEA=
 github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515230819-64335ed9d778 h1:j2TgyQj9AxfKPHBXrrRiPW/t5fIGzr4MUGeEbAD8uDY=
 github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250515230819-64335ed9d778/go.mod h1:fY5hKYqyDU71Jol5dgPF5RYmpu4H2YqXhd++X8uPmEA=
 github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250417194121-8d91c0b8405b h1:k1UleO5GdkdXVlGnHPEx7g45MUHTG0nTRe1fd2kxjX4=
@@ -82,6 +80,10 @@ github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20250131210530-7306ae3
 github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20250131210530-7306ae3e5762/go.mod h1:aesYC9CUzVQ4JUHZwpLYx0yeNK1Sl37vzLKmDKQiyoY=
 github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20250417194121-8d91c0b8405b h1:hSGoR1PrtZXf9Dk/+V0NsYjmJtzh3kZSJS0bStJ0iSE=
 github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20250417194121-8d91c0b8405b/go.mod h1:ftOGlExX3C/AN24/N3j3+rHo4C7ehxfHNGpimuWv7IQ=
+github.com/sologenic/fs-utils-lib/go/grpc-client v0.0.0-20240813185122-7e698e51f72f h1:vXgC7KwYgGe7f0sQB2xiQR9kBsHAFPUGxioRbWle1UY=
+github.com/sologenic/fs-utils-lib/go/grpc-client v0.0.0-20240813185122-7e698e51f72f/go.mod h1:ao/6BhDbkWf1sWAd8pZBVDkjeZmv42QKGOR7Dd03iG8=
+github.com/sologenic/fs-utils-lib/go/logger v0.0.0-20240228225607-8ae2735b9ab4 h1:Sd1WNlrtHXZ9Lf8ciNWxec2qwESHo9j5X+i0zwYuDfw=
+github.com/sologenic/fs-utils-lib/go/logger v0.0.0-20240228225607-8ae2735b9ab4/go.mod h1:JiEQFnGE2UGf1mlNEfpIQtJcJ6WgR4rk8/Ao6BfZLGw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

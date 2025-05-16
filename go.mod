@@ -25,6 +25,8 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20250131210530-7306ae3e5762 // indirect
+	github.com/sologenic/fs-utils-lib/go/grpc-client v0.0.0-20240813185122-7e698e51f72f // indirect
+	github.com/sologenic/fs-utils-lib/go/logger v0.0.0-20240228225607-8ae2735b9ab4 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/net v0.34.0 // indirect

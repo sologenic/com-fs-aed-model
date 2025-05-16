@@ -9,7 +9,6 @@ import (
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
-	assetdmn "github.com/sologenic/com-fs-asset-model/domain"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
 	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
 
@@ -86,9 +85,10 @@ func GetTickers(
 	assetClient assetgrpc.AssetListServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
-	c *utilcache.Cache,
+	tickerCache *utilcache.Cache,
+	assetCache *utilcache.Cache,
 ) *TickerResponse {
-	retvals := getTickers(ctx, aedClient, assetClient, opt, organizationID, c)
+	retvals := getTickers(ctx, aedClient, assetClient, opt, organizationID, tickerCache, assetCache)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
 }
@@ -127,7 +127,8 @@ func getTickers(
 	assetClient assetgrpc.AssetListServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
-	c *utilcache.Cache,
+	tickerCache *utilcache.Cache,
+	assetCache *utilcache.Cache,
 ) *Tickers {
 	// Retrieve the tickers from the AED service:
 	tickerAEDs := make(map[string]*aedgrpc.AED)
@@ -137,17 +138,17 @@ func getTickers(
 	var wg sync.WaitGroup
 	for _, symbol := range opt.Symbols {
 		// Cache check for the symbol:
-		c.Mutex.RLock()
-		if cache, ok := c.Data[symbol]; ok {
+		tickerCache.Mutex.RLock()
+		if cache, ok := tickerCache.Data[symbol]; ok {
 			v := cache.Value.(*aedgrpc.AED) // Changed from *TickerPoint to *aedgrpc.AED
 			tickerAEDs[symbol] = v
-			c.Mutex.RUnlock()
+			tickerCache.Mutex.RUnlock()
 			continue
 		}
-		c.Mutex.RUnlock()
+		tickerCache.Mutex.RUnlock()
 		wg.Add(1)
 		go func(symbol string) {
-			baseAEDs, err := getAED(ctx, aedClient, assetClient, symbol, opt, organizationID)
+			baseAEDs, err := getAED(ctx, aedClient, assetClient, symbol, opt, organizationID, assetCache)
 			if err != nil {
 				logger.Errorf("(no cache) Error getting aed data for %s: %s", symbol, err.Error())
 				wg.Done()
@@ -160,7 +161,7 @@ func getTickers(
 		}(symbol)
 	}
 	wg.Wait()
-	tickersResp := AEDsToTickers(AEDs, opt, tickerAEDs, c)
+	tickersResp := AEDsToTickers(AEDs, opt, tickerAEDs, tickerCache)
 	return (*Tickers)(&tickersResp)
 }
 
@@ -172,6 +173,7 @@ func getAED(
 	symbol string,
 	opt *TickerReadOptions,
 	organizationID string,
+	assetCache *utilcache.Cache,
 ) (*aedgrpc.AEDs, error) {
 	loadSymbol := &aedgrpc.AEDFilter{
 		Symbol:         symbol,
@@ -194,7 +196,7 @@ func getAED(
 	// Normalize the AED data
 	for _, aed := range baseAEDs.AEDs {
 		var err error
-		aed, err = normalizeAED(ctx, assetClient, aed, organizationID)
+		aed, err = NormalizeAED(ctx, assetClient, aed, organizationID, assetCache)
 		if err != nil {
 			logger.Errorf("Error normalizing AED %v: %v", aed, err)
 			continue
@@ -203,54 +205,19 @@ func getAED(
 	return baseAEDs, nil
 }
 
-// normalizeAED normalizes AED data based on asset precisions
-func normalizeAED(
-	ctx context.Context,
-	assetClient assetgrpc.AssetListServiceClient,
-	aed *aedgrpc.AED,
-	organizationID string,
-) (*aedgrpc.AED, error) {
-	symbol, err := assetdmnsymbol.NewSymbolFromString(aed.Symbol)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse symbol: %w", err)
-	}
-	// Get base asset precision
-	baseAsset, err := assetClient.GetAsset(ctx, &assetgrpc.AssetKey{
-		Key: assetdmn.CreateAssetKeyStr(symbol.Base, organizationID),
-	})
-	if err != nil || baseAsset.AssetDetails == nil || baseAsset.AssetDetails.Denom == nil {
-		return nil, fmt.Errorf("failed to fetch base precision for %v: %w", symbol.Base, err)
-	}
-	// Get quote asset precision
-	quoteAsset, err := assetClient.GetAsset(ctx, &assetgrpc.AssetKey{
-		Key: assetdmn.CreateAssetKeyStr(symbol.Quote, organizationID),
-	})
-	if err != nil || quoteAsset.AssetDetails == nil || quoteAsset.AssetDetails.Denom == nil {
-		return nil, fmt.Errorf("failed to fetch quote precision for %v: %w", symbol.Quote, err)
-	}
-
-	return NormalizeAED(
-		ctx,
-		aed,
-		organizationID,
-		baseAsset.AssetDetails.Denom.Precision,
-		quoteAsset.AssetDetails.Denom.Precision,
-	)
-}
-
 // AEDsToTickers converts the aed data to ticker data
 // The values calculated are cached for refreshInterval max (clock rounded to refreshInterval intervals) with an allowed stale period of 5s, giving an always retrieval of values
 // from the cache for performance and data cost reasons (we can refresh in a go blocking routine while the data is still being served quickly)
-func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, c *utilcache.Cache) map[string]*aedgrpc.AED {
+func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, tickerCache *utilcache.Cache) map[string]*aedgrpc.AED {
 	for _, aed := range AEDs {
 		tickerAED := calculateTickerAED(aed, domainOptions)
 		tickerAEDs[aed.AEDs[0].Symbol] = tickerAED
-		c.Mutex.Lock()
-		c.Data[aed.AEDs[0].Symbol] = &utilcache.LockableCache{
+		tickerCache.Mutex.Lock()
+		tickerCache.Data[aed.AEDs[0].Symbol] = &utilcache.LockableCache{
 			Value:       tickerAED,
 			LastUpdated: time.Now(),
 		}
-		c.Mutex.Unlock()
+		tickerCache.Mutex.Unlock()
 	}
 	return tickerAEDs
 }
