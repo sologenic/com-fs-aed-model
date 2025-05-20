@@ -7,6 +7,8 @@ export declare enum Series {
     INTERNAL_TRADES = 1,
     /** MARKET_DATA_STOCKS - Source: external market data provider for the general stock market (can be more than 1 provider, but only a single provider per stock) */
     MARKET_DATA_STOCKS = 2,
+    /** USER_PERFORMANCE - Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods */
+    USER_PERFORMANCE = 3,
     UNRECOGNIZED = -1
 }
 export declare function seriesFromJSON(object: any): Series;
@@ -40,6 +42,8 @@ export declare enum PeriodType {
     PERIOD_TYPE_HOUR = 2,
     PERIOD_TYPE_DAY = 3,
     PERIOD_TYPE_WEEK = 4,
+    PERIOD_TYPE_MONTH = 5,
+    PERIOD_TYPE_YEAR = 6,
     UNRECOGNIZED = -1
 }
 export declare function periodTypeFromJSON(object: any): PeriodType;

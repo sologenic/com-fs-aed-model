@@ -27,6 +27,7 @@ enum Series {
     SERIES_NOT_USED = 0;
     INTERNAL_TRADES = 1; // Source: dex trades, Usage: general trade graphs, supports TradeView-like graphing tools (ohlc)
     MARKET_DATA_STOCKS = 2; // Source: external market data provider for the general stock market (can be more than 1 provider, but only a single provider per stock)
+    USER_PERFORMANCE = 3; // Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods 
 }
 
 message Value {
@@ -67,4 +68,6 @@ enum PeriodType {
     PERIOD_TYPE_HOUR = 2;
     PERIOD_TYPE_DAY = 3;
     PERIOD_TYPE_WEEK = 4;
+    PERIOD_TYPE_MONTH = 5;
+    PERIOD_TYPE_YEAR = 6;
 }
