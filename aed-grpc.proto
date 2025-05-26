@@ -32,6 +32,7 @@ message AEDFilter {
     // Indicates if the data is allowed to be retrieved from the cache (default: false - no cache)
     bool AllowCache = 8;
     string OrganizationID = 9;
+    Series Series = 10; // Series to filter the AEDs by
 }
 
 message PeriodsFilter {
