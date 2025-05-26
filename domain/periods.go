@@ -136,7 +136,7 @@ func ToAEDKeyTimestamp(p *aedgrpc.Period, timestamp int64) int64 {
 func ToAEDKeyTimestamppb(p *aedgrpc.Period, timestamp *timestamppb.Timestamp) *timestamppb.Timestamp {
 	t := timestamp.AsTime().Unix()
 	ts := ToAEDKeyTimestamp(p, t)
-	return timestamppb.New(time.Unix(0, ts))
+	return timestamppb.New(time.Unix(ts, 0))
 }
 
 // Returns the key timestamp for any given period by calculating the minute minus the modulus for the given duration
