@@ -18,7 +18,7 @@ import {
   type UntypedServiceImplementation,
 } from "@grpc/grpc-js";
 import _m0 from "protobufjs/minimal";
-import { AED, AEDs, Period } from "./aed";
+import { AED, AEDs, Period, Series, seriesFromJSON, seriesToJSON } from "./aed";
 import { Empty } from "./google/protobuf/empty";
 import { Timestamp } from "./google/protobuf/timestamp";
 import { Network, networkFromJSON, networkToJSON } from "./sologenic/com-fs-utils-lib/models/metadata/metadata";
@@ -42,6 +42,8 @@ export interface AEDFilter {
   /** Indicates if the data is allowed to be retrieved from the cache (default: false - no cache) */
   AllowCache: boolean;
   OrganizationID: string;
+  /** Series to filter the AEDs by */
+  Series: Series;
 }
 
 export interface PeriodsFilter {
@@ -65,6 +67,7 @@ function createBaseAEDFilter(): AEDFilter {
     Backfill: false,
     AllowCache: false,
     OrganizationID: "",
+    Series: 0,
   };
 }
 
@@ -96,6 +99,9 @@ export const AEDFilter = {
     }
     if (message.OrganizationID !== "") {
       writer.uint32(74).string(message.OrganizationID);
+    }
+    if (message.Series !== 0) {
+      writer.uint32(80).int32(message.Series);
     }
     return writer;
   },
@@ -170,6 +176,13 @@ export const AEDFilter = {
 
           message.OrganizationID = reader.string();
           continue;
+        case 10:
+          if (tag !== 80) {
+            break;
+          }
+
+          message.Series = reader.int32() as any;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -190,6 +203,7 @@ export const AEDFilter = {
       Backfill: isSet(object.Backfill) ? globalThis.Boolean(object.Backfill) : false,
       AllowCache: isSet(object.AllowCache) ? globalThis.Boolean(object.AllowCache) : false,
       OrganizationID: isSet(object.OrganizationID) ? globalThis.String(object.OrganizationID) : "",
+      Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
     };
   },
 
@@ -222,6 +236,9 @@ export const AEDFilter = {
     if (message.OrganizationID !== "") {
       obj.OrganizationID = message.OrganizationID;
     }
+    if (message.Series !== 0) {
+      obj.Series = seriesToJSON(message.Series);
+    }
     return obj;
   },
 
@@ -241,6 +258,7 @@ export const AEDFilter = {
     message.Backfill = object.Backfill ?? false;
     message.AllowCache = object.AllowCache ?? false;
     message.OrganizationID = object.OrganizationID ?? "";
+    message.Series = object.Series ?? 0;
     return message;
   },
 };

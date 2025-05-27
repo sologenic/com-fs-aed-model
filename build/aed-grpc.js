@@ -6,7 +6,7 @@
 /* eslint-disable */
 import { makeGenericClientConstructor, } from "@grpc/grpc-js";
 import _m0 from "protobufjs/minimal";
-import { AED, AEDs, Period } from "./aed";
+import { AED, AEDs, Period, seriesFromJSON, seriesToJSON } from "./aed";
 import { Empty } from "./google/protobuf/empty";
 import { Timestamp } from "./google/protobuf/timestamp";
 import { networkFromJSON, networkToJSON } from "./sologenic/com-fs-utils-lib/models/metadata/metadata";
@@ -22,6 +22,7 @@ function createBaseAEDFilter() {
         Backfill: false,
         AllowCache: false,
         OrganizationID: "",
+        Series: 0,
     };
 }
 export const AEDFilter = {
@@ -52,6 +53,9 @@ export const AEDFilter = {
         }
         if (message.OrganizationID !== "") {
             writer.uint32(74).string(message.OrganizationID);
+        }
+        if (message.Series !== 0) {
+            writer.uint32(80).int32(message.Series);
         }
         return writer;
     },
@@ -116,6 +120,12 @@ export const AEDFilter = {
                     }
                     message.OrganizationID = reader.string();
                     continue;
+                case 10:
+                    if (tag !== 80) {
+                        break;
+                    }
+                    message.Series = reader.int32();
+                    continue;
             }
             if ((tag & 7) === 4 || tag === 0) {
                 break;
@@ -135,6 +145,7 @@ export const AEDFilter = {
             Backfill: isSet(object.Backfill) ? globalThis.Boolean(object.Backfill) : false,
             AllowCache: isSet(object.AllowCache) ? globalThis.Boolean(object.AllowCache) : false,
             OrganizationID: isSet(object.OrganizationID) ? globalThis.String(object.OrganizationID) : "",
+            Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
         };
     },
     toJSON(message) {
@@ -166,13 +177,16 @@ export const AEDFilter = {
         if (message.OrganizationID !== "") {
             obj.OrganizationID = message.OrganizationID;
         }
+        if (message.Series !== 0) {
+            obj.Series = seriesToJSON(message.Series);
+        }
         return obj;
     },
     create(base) {
         return AEDFilter.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const message = createBaseAEDFilter();
         message.Symbol = (_a = object.Symbol) !== null && _a !== void 0 ? _a : "";
         message.From = (_b = object.From) !== null && _b !== void 0 ? _b : undefined;
@@ -185,6 +199,7 @@ export const AEDFilter = {
         message.Backfill = (_f = object.Backfill) !== null && _f !== void 0 ? _f : false;
         message.AllowCache = (_g = object.AllowCache) !== null && _g !== void 0 ? _g : false;
         message.OrganizationID = (_h = object.OrganizationID) !== null && _h !== void 0 ? _h : "";
+        message.Series = (_j = object.Series) !== null && _j !== void 0 ? _j : 0;
         return message;
     },
 };

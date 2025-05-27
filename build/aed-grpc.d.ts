@@ -2,7 +2,7 @@
 /// <reference types="node" />
 import { type CallOptions, ChannelCredentials, Client, type ClientOptions, type ClientUnaryCall, type handleUnaryCall, Metadata, type ServiceError, type UntypedServiceImplementation } from "@grpc/grpc-js";
 import _m0 from "protobufjs/minimal";
-import { AED, AEDs, Period } from "./aed";
+import { AED, AEDs, Period, Series } from "./aed";
 import { Empty } from "./google/protobuf/empty";
 import { Network } from "./sologenic/com-fs-utils-lib/models/metadata/metadata";
 export declare const protobufPackage = "aed";
@@ -19,6 +19,8 @@ export interface AEDFilter {
     /** Indicates if the data is allowed to be retrieved from the cache (default: false - no cache) */
     AllowCache: boolean;
     OrganizationID: string;
+    /** Series to filter the AEDs by */
+    Series: Series;
 }
 export interface PeriodsFilter {
     Symbol: string;
@@ -46,6 +48,7 @@ export declare const AEDFilter: {
         Backfill?: boolean | undefined;
         AllowCache?: boolean | undefined;
         OrganizationID?: string | undefined;
+        Series?: Series | undefined;
     } & {
         Symbol?: string | undefined;
         From?: Date | undefined;
@@ -62,6 +65,7 @@ export declare const AEDFilter: {
         Backfill?: boolean | undefined;
         AllowCache?: boolean | undefined;
         OrganizationID?: string | undefined;
+        Series?: Series | undefined;
     } & { [K_1 in Exclude<keyof I, keyof AEDFilter>]: never; }>(base?: I | undefined): AEDFilter;
     fromPartial<I_1 extends {
         Symbol?: string | undefined;
@@ -76,6 +80,7 @@ export declare const AEDFilter: {
         Backfill?: boolean | undefined;
         AllowCache?: boolean | undefined;
         OrganizationID?: string | undefined;
+        Series?: Series | undefined;
     } & {
         Symbol?: string | undefined;
         From?: Date | undefined;
@@ -92,6 +97,7 @@ export declare const AEDFilter: {
         Backfill?: boolean | undefined;
         AllowCache?: boolean | undefined;
         OrganizationID?: string | undefined;
+        Series?: Series | undefined;
     } & { [K_3 in Exclude<keyof I_1, keyof AEDFilter>]: never; }>(object: I_1): AEDFilter;
 };
 export declare const PeriodsFilter: {
