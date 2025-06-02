@@ -18,6 +18,8 @@ service AEDService {
     rpc Get(AEDFilter) returns (AEDs) {}
     // Get aeds for all the given periods
     rpc GetAEDsForPeriods(PeriodsFilter) returns (AEDs) {}
+    // Get latest AED for a given symbol, network and period
+    rpc GetLatest(AEDFilter) returns (AED) {}
 }
 
 message AEDFilter {
