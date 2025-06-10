@@ -18,8 +18,8 @@ service AEDService {
     rpc Get(AEDFilter) returns (AEDs) {}
     // Get aeds for all the given periods
     rpc GetAEDsForPeriods(PeriodsFilter) returns (AEDs) {}
-    // Get latest AED for a given symbol, network and period
-    rpc GetLatest(AEDFilter) returns (AED) {}
+    // Get latest LatestRequest for a given symbol, network and period
+    rpc GetLatest(LatestRequest) returns (AED) {}
 }
 
 message AEDFilter {
@@ -45,4 +45,11 @@ message PeriodsFilter {
 message PeriodBucket {
     Period Period = 1;
     google.protobuf.Timestamp Timestamp = 2;
+}
+
+message LatestRequest {
+    string Symbol = 1;
+    metadata.Network Network = 2;
+    Series Series = 4; // Series to filter the AEDs by
+    string OrganizationID = 5;
 }

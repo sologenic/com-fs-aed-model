@@ -39,8 +39,8 @@ type AEDServiceClient interface {
 	Get(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error)
-	// Get latest AED for a given symbol, network and period
-	GetLatest(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AED, error)
+	// Get latest LatestRequest for a given symbol, network and period
+	GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error)
 }
 
 type aEDServiceClient struct {
@@ -87,7 +87,7 @@ func (c *aEDServiceClient) GetAEDsForPeriods(ctx context.Context, in *PeriodsFil
 	return out, nil
 }
 
-func (c *aEDServiceClient) GetLatest(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AED, error) {
+func (c *aEDServiceClient) GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error) {
 	out := new(AED)
 	err := c.cc.Invoke(ctx, AEDService_GetLatest_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -108,8 +108,8 @@ type AEDServiceServer interface {
 	Get(context.Context, *AEDFilter) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error)
-	// Get latest AED for a given symbol, network and period
-	GetLatest(context.Context, *AEDFilter) (*AED, error)
+	// Get latest LatestRequest for a given symbol, network and period
+	GetLatest(context.Context, *LatestRequest) (*AED, error)
 }
 
 // UnimplementedAEDServiceServer should be embedded to have forward compatible implementations.
@@ -128,7 +128,7 @@ func (UnimplementedAEDServiceServer) Get(context.Context, *AEDFilter) (*AEDs, er
 func (UnimplementedAEDServiceServer) GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAEDsForPeriods not implemented")
 }
-func (UnimplementedAEDServiceServer) GetLatest(context.Context, *AEDFilter) (*AED, error) {
+func (UnimplementedAEDServiceServer) GetLatest(context.Context, *LatestRequest) (*AED, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLatest not implemented")
 }
 
@@ -216,7 +216,7 @@ func _AEDService_GetAEDsForPeriods_Handler(srv interface{}, ctx context.Context,
 }
 
 func _AEDService_GetLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AEDFilter)
+	in := new(LatestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func _AEDService_GetLatest_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: AEDService_GetLatest_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AEDServiceServer).GetLatest(ctx, req.(*AEDFilter))
+		return srv.(AEDServiceServer).GetLatest(ctx, req.(*LatestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
