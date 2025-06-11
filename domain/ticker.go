@@ -36,13 +36,15 @@ type TickerReadOptions struct {
 	To      time.Time
 	Period  time.Duration
 	Network metadata.Network
+	Series  aedgrpc.Series
 }
 
-func NewTickerReadOptions(symbols []string, to time.Time, period time.Duration) *TickerReadOptions {
+func NewTickerReadOptions(symbols []string, to time.Time, period time.Duration, series aedgrpc.Series) *TickerReadOptions {
 	return &TickerReadOptions{
 		Symbols: uniqueSymbols(symbols),
 		To:      to,
 		Period:  period,
+		Series:  series,
 	}
 }
 
