@@ -8,6 +8,8 @@ import (
 	"time"
 
 	dec "github.com/shopspring/decimal"
+	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
+	organizationdmn "github.com/sologenic/com-fs-admin-organization-model/domain"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetgrpclient "github.com/sologenic/com-fs-asset-model/client"
@@ -15,6 +17,7 @@ import (
 	assetdmndenom "github.com/sologenic/com-fs-asset-model/domain/denom"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
 	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
+	"github.com/sologenic/com-fs-utils-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
 
@@ -256,12 +259,12 @@ func SetStringValue(aed *aedgrpc.AED, field aedgrpc.Field, value string) {
 AED data is stored in the subunit price and volume notation of the orders.
 This function converts the subunit price and volume to human readable price and volume.
 */
-func NormalizeAED(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, aed *aedgrpc.AED, organizationID string, assetCache *utilcache.Cache) (*aedgrpc.AED, error) {
+func NormalizeAED(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, aed *aedgrpc.AED, organizationID string, assetCache *utilcache.Cache) (*aedgrpc.AED, error) {
 	symbol, err := assetdmnsymbol.NewSymbolFromString(aed.Symbol) // {denom1}:{denom2}
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse symbol: %w", err)
 	}
-	basePrecision, quotePrecision, err := Precisions(ctx, assetClient, aed.MetaData.Network, symbol, organizationID, assetCache)
+	basePrecision, quotePrecision, err := Precisions(ctx, assetClient, orgClient, aed.MetaData.Network, symbol, organizationID, assetCache)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch precisions for %v: %w", symbol, err)
 	}
@@ -307,20 +310,25 @@ func NormalizeAED(ctx context.Context, assetClient assetgrpc.AssetListServiceCli
 }
 
 // Get the asset from the asset service to be able to present the correct precision to the user
-func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, network metadata.Network, symbol *assetdmnsymbol.Symbol, organizationID string, assetCache *utilcache.Cache) (int64, int64, error) {
-	basePrecision, err := getPrecision(ctx, assetClient, symbol.Base, network, organizationID, assetCache)
+func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, network metadata.Network, symbol *assetdmnsymbol.Symbol, organizationID string, assetCache *utilcache.Cache) (int64, int64, error) {
+	basePrecision, err := getPrecision(ctx, assetClient, orgClient, symbol.Base, network, organizationID, assetCache)
 	if err != nil {
 		return 0, 0, err
 	}
-	quotePrecision, err := getPrecision(ctx, assetClient, symbol.Quote, network, organizationID, assetCache)
+	quotePrecision, err := getPrecision(ctx, assetClient, orgClient, symbol.Quote, network, organizationID, assetCache)
 	if err != nil {
 		return 0, 0, err
 	}
 	return basePrecision, quotePrecision, nil
 }
 
-func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, denom *assetdmndenom.Denom, network metadata.Network, organizationID string, assetCache *utilcache.Cache) (int64, error) {
-	assetKey, err := assetdmn.CreateAssetKeyStrFromDenomStr(denom.ToString(), organizationID)
+func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, denom *assetdmndenom.Denom, network metadata.Network, organizationID string, assetCache *utilcache.Cache) (int64, error) {
+	SmartContractIssuerAddr, err := organizationdmn.GetSmartContractIssuerAddr(ctx, orgClient, organizationID, network)
+	if err != nil {
+		logger.Errorf("error getting smart contract issuer address for organization %s: %v", organizationID, err)
+		return 0, fmt.Errorf("failed to get smart contract issuer address: %w", err)
+	}
+	assetKey, err := assetdmn.CreateAssetKeyStrFromDenomStr(denom.ToString(), organizationID, SmartContractIssuerAddr)
 	if err != nil {
 		return 0, err
 	}

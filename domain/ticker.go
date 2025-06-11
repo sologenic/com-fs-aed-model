@@ -6,6 +6,7 @@ import (
 	sync "sync"
 	"time"
 
+	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
@@ -83,12 +84,13 @@ func GetTickers(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
 	assetClient assetgrpc.AssetListServiceClient,
+	orgClient organizationgrpc.OrganizationServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
 	tickerCache *utilcache.Cache,
 	assetCache *utilcache.Cache,
 ) *TickerResponse {
-	retvals := getTickers(ctx, aedClient, assetClient, opt, organizationID, tickerCache, assetCache)
+	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
 }
@@ -125,6 +127,7 @@ func getTickers(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
 	assetClient assetgrpc.AssetListServiceClient,
+	orgClient organizationgrpc.OrganizationServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
 	tickerCache *utilcache.Cache,
@@ -148,7 +151,7 @@ func getTickers(
 		tickerCache.Mutex.RUnlock()
 		wg.Add(1)
 		go func(symbol string) {
-			baseAEDs, err := getAED(ctx, aedClient, assetClient, symbol, opt, organizationID, assetCache)
+			baseAEDs, err := getAED(ctx, aedClient, assetClient, orgClient, symbol, opt, organizationID, assetCache)
 			if err != nil {
 				logger.Errorf("(no cache) Error getting aed data for %s: %s", symbol, err.Error())
 				wg.Done()
@@ -170,6 +173,7 @@ func getAED(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
 	assetClient assetgrpc.AssetListServiceClient,
+	orgClient organizationgrpc.OrganizationServiceClient,
 	symbol string,
 	opt *TickerReadOptions,
 	organizationID string,
@@ -196,7 +200,7 @@ func getAED(
 	// Normalize the AED data
 	for _, aed := range baseAEDs.AEDs {
 		var err error
-		aed, err = NormalizeAED(ctx, assetClient, aed, organizationID, assetCache)
+		aed, err = NormalizeAED(ctx, assetClient, orgClient, aed, organizationID, assetCache)
 		if err != nil {
 			logger.Errorf("Error normalizing AED %v: %v", aed, err)
 			continue
