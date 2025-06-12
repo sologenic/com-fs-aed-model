@@ -92,7 +92,7 @@ func GetTickers(
 	tickerCache *utilcache.Cache,
 	assetCache *utilcache.Cache,
 ) *TickerResponse {
-	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
+ 	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
 }
@@ -190,6 +190,7 @@ func getAED(
 		Backfill:       true,
 		AllowCache:     true,
 		OrganizationID: organizationID,
+		Series:         opt.Series,
 	}
 	baseAEDs, err := aedClient.Get(aedclient.AuthCtx(ctx), loadSymbol)
 	if err != nil {
