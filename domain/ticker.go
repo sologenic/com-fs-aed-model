@@ -15,7 +15,6 @@ import (
 
 	"github.com/sologenic/com-fs-utils-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -33,18 +32,16 @@ type TickerResponse struct {
 // Currently only 24h tickers are used.
 type TickerReadOptions struct {
 	Symbols []string
-	To      time.Time
 	Period  time.Duration
 	Network metadata.Network
 	Series  aedgrpc.Series
 }
 
-func NewTickerReadOptions(symbols []string, to time.Time, period time.Duration, series aedgrpc.Series) *TickerReadOptions {
+func NewTickerReadOptions(symbols []string, series aedgrpc.Series) *TickerReadOptions {
 	return &TickerReadOptions{
 		Symbols: uniqueSymbols(symbols),
-		To:      to,
-		Period:  period,
 		Series:  series,
+		Period:  DefaultTickerPeriod,
 	}
 }
 
@@ -92,7 +89,7 @@ func GetTickers(
 	tickerCache *utilcache.Cache,
 	assetCache *utilcache.Cache,
 ) *TickerResponse {
- 	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
+	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
 }
@@ -181,35 +178,26 @@ func getAED(
 	organizationID string,
 	assetCache *utilcache.Cache,
 ) (*aedgrpc.AEDs, error) {
-	loadSymbol := &aedgrpc.AEDFilter{
+	latestRequest := &aedgrpc.LatestRequest{
 		Symbol:         symbol,
 		Network:        opt.Network,
-		Period:         &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 1},
-		To:             timestamppb.New(opt.To.Truncate(time.Hour)),
-		From:           timestamppb.New(opt.To.Truncate(time.Hour).Add(-opt.Period)),
-		Backfill:       true,
-		AllowCache:     true,
-		OrganizationID: organizationID,
 		Series:         opt.Series,
+		OrganizationID: organizationID,
 	}
-	baseAEDs, err := aedClient.Get(aedclient.AuthCtx(ctx), loadSymbol)
+	latestAED, err := aedClient.GetLatest(aedclient.AuthCtx(ctx), latestRequest)
 	if err != nil {
-		return nil, fmt.Errorf("error getting aed data for %s: %w", symbol, err)
+		return nil, fmt.Errorf("error getting latest aed data for %s: %w", symbol, err)
 	}
-	// Prevent downstream failures on empty arrays.
-	if len(baseAEDs.AEDs) == 0 {
-		return nil, fmt.Errorf("no aed data found for %s", symbol)
+	if latestAED == nil {
+		return nil, fmt.Errorf("no latest aed data found for %s", symbol)
 	}
 	// Normalize the AED data
-	for _, aed := range baseAEDs.AEDs {
-		var err error
-		aed, err = NormalizeAED(ctx, assetClient, orgClient, aed, organizationID, assetCache)
-		if err != nil {
-			logger.Errorf("Error normalizing AED %v: %v", aed, err)
-			continue
-		}
+	normalizedAED, err := NormalizeAED(ctx, assetClient, orgClient, latestAED, organizationID, assetCache)
+	if err != nil {
+		logger.Errorf("Error normalizing AED %v: %v", latestAED, err)
+		return nil, fmt.Errorf("error normalizing aed data for %s: %w", symbol, err)
 	}
-	return baseAEDs, nil
+	return &aedgrpc.AEDs{AEDs: []*aedgrpc.AED{normalizedAED}}, nil
 }
 
 // AEDsToTickers converts the aed data to ticker data
@@ -235,75 +223,34 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc
 	if len(AEDs.AEDs) == 0 {
 		return nil
 	}
-	fromTime := options.To.Add(-options.Period)
-	// get the base AEDs for the requested period calculation.
-	// The input data contains the base data to calculate the requested period over.
-	// Calculate the volume:
-	var open, close, low, high, volume, invertedVolume, firstPrice, marketCap, eps, per, yield float64
-	// Assumption is that the data might not be ordered by time.
-	var tStart, tEnd time.Time
-	for _, baseAEDs := range AEDs.AEDs {
-		// Extract values using helper functions
-		lowVal := GetFloatValue(baseAEDs, aedgrpc.Field_LOW)
-		highVal := GetFloatValue(baseAEDs, aedgrpc.Field_HIGH)
-		volumeVal := GetFloatValue(baseAEDs, aedgrpc.Field_VOLUME)
-		invertedVolumeVal := GetFloatValue(baseAEDs, aedgrpc.Field_INVERTED_VOLUME)
-		openVal := GetFloatValue(baseAEDs, aedgrpc.Field_OPEN)
-		closeVal := GetFloatValue(baseAEDs, aedgrpc.Field_CLOSE)
-		marketCapVal := GetFloatValue(baseAEDs, aedgrpc.Field_MARKET_CAP)
-		epsVal := GetFloatValue(baseAEDs, aedgrpc.Field_EPS)
-		perVal := GetFloatValue(baseAEDs, aedgrpc.Field_PE_RATIO)
-		yieldVal := GetFloatValue(baseAEDs, aedgrpc.Field_YIELD)
+	// Use the latest AED data directly since we're getting the most recent data
+	latestAED := AEDs.AEDs[0]
 
-		if low == 0.0 || low > lowVal {
-			low = lowVal
-		}
-		if high < highVal {
-			high = highVal
-		}
-		volume += volumeVal
-		invertedVolume += invertedVolumeVal
-		// calculate the open:
-		if tStart.IsZero() || tStart.After(baseAEDs.Timestamp.AsTime()) {
-			open = openVal
-			tStart = baseAEDs.Timestamp.AsTime()
-		}
-		// Calculate the first price: This is the first price in the time period (so timestamp > From)
-		if tStart.After(fromTime) && (firstPrice == 0.0 || firstPrice > openVal) {
-			firstPrice = openVal
-		}
-		// calculate the close:
-		if tEnd.IsZero() || tEnd.Before(baseAEDs.Timestamp.AsTime()) {
-			close = closeVal
-			tEnd = baseAEDs.Timestamp.AsTime()
-			marketCap = marketCapVal
-			eps = epsVal
-			per = perVal
-			yield = yieldVal
-		}
-	}
+	// Extract values using helper functions
+	open := GetFloatValue(latestAED, aedgrpc.Field_OPEN)
+	high := GetFloatValue(latestAED, aedgrpc.Field_HIGH)
+	low := GetFloatValue(latestAED, aedgrpc.Field_LOW)
+	close := GetFloatValue(latestAED, aedgrpc.Field_CLOSE)
+	volume := GetFloatValue(latestAED, aedgrpc.Field_VOLUME)
+	invertedVolume := GetFloatValue(latestAED, aedgrpc.Field_INVERTED_VOLUME)
+	marketCap := GetFloatValue(latestAED, aedgrpc.Field_MARKET_CAP)
+	eps := GetFloatValue(latestAED, aedgrpc.Field_EPS)
+	per := GetFloatValue(latestAED, aedgrpc.Field_PE_RATIO)
+	yield := GetFloatValue(latestAED, aedgrpc.Field_YIELD)
 
-	// The calculated values might cover the requested time period or might be from before the requested time period:
-	// If they are from before the requested time period, volume is 0, high, low and close are the same as the open.
-	if tStart.Before(fromTime) {
-		volume = 0
-		high = open
-		low = open
-		close = open
-		firstPrice = 0.0
-		invertedVolume = 0.0
-	}
+	// Use the actual timestamp from the latest data
+	actualTimestamp := latestAED.Timestamp.AsTime()
 
 	tickerAED := &aedgrpc.AED{
-		Symbol:         AEDs.AEDs[0].Symbol,
-		OrganizationID: AEDs.AEDs[0].OrganizationID,
-		Timestamp:      timestamppb.New(options.To),
+		Symbol:         latestAED.Symbol,
+		OrganizationID: latestAED.OrganizationID,
+		Timestamp:      latestAED.Timestamp,
 		Period: &aedgrpc.Period{
 			Type:     aedgrpc.PeriodType_PERIOD_TYPE_DAY,
 			Duration: int32(options.Period.Hours() / 24),
 		},
-		MetaData: AEDs.AEDs[0].MetaData,
-		Series:   AEDs.AEDs[0].Series,
+		MetaData: latestAED.MetaData,
+		Series:   latestAED.Series,
 		Value:    []*aedgrpc.Value{},
 	}
 
@@ -313,11 +260,11 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc
 	SetFloatValue(tickerAED, aedgrpc.Field_LOW, low)
 	SetFloatValue(tickerAED, aedgrpc.Field_CLOSE, close)
 	SetFloatValue(tickerAED, aedgrpc.Field_LAST_PRICE, close)
-	SetFloatValue(tickerAED, aedgrpc.Field_FIRST_PRICE, firstPrice)
+	SetFloatValue(tickerAED, aedgrpc.Field_FIRST_PRICE, open)
 	SetFloatValue(tickerAED, aedgrpc.Field_VOLUME, volume)
 	SetFloatValue(tickerAED, aedgrpc.Field_INVERTED_VOLUME, invertedVolume)
-	SetIntValue(tickerAED, aedgrpc.Field_OPEN_TIME, fromTime.Unix())
-	SetIntValue(tickerAED, aedgrpc.Field_CLOSE_TIME, options.To.Unix())
+	SetIntValue(tickerAED, aedgrpc.Field_OPEN_TIME, actualTimestamp.Unix())
+	SetIntValue(tickerAED, aedgrpc.Field_CLOSE_TIME, actualTimestamp.Unix())
 	SetFloatValue(tickerAED, aedgrpc.Field_MARKET_CAP, marketCap)
 	SetFloatValue(tickerAED, aedgrpc.Field_EPS, eps)
 	SetFloatValue(tickerAED, aedgrpc.Field_PE_RATIO, per)
