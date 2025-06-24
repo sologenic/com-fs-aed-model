@@ -24,6 +24,7 @@ const (
 	AEDService_BatchUpsert_FullMethodName       = "/aed.AEDService/BatchUpsert"
 	AEDService_Get_FullMethodName               = "/aed.AEDService/Get"
 	AEDService_GetAEDsForPeriods_FullMethodName = "/aed.AEDService/GetAEDsForPeriods"
+	AEDService_GetLatest_FullMethodName         = "/aed.AEDService/GetLatest"
 )
 
 // AEDServiceClient is the client API for AEDService service.
@@ -38,6 +39,8 @@ type AEDServiceClient interface {
 	Get(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error)
+	// Get latest LatestRequest for a given symbol, network and period
+	GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error)
 }
 
 type aEDServiceClient struct {
@@ -84,6 +87,15 @@ func (c *aEDServiceClient) GetAEDsForPeriods(ctx context.Context, in *PeriodsFil
 	return out, nil
 }
 
+func (c *aEDServiceClient) GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error) {
+	out := new(AED)
+	err := c.cc.Invoke(ctx, AEDService_GetLatest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AEDServiceServer is the server API for AEDService service.
 // All implementations should embed UnimplementedAEDServiceServer
 // for forward compatibility
@@ -96,6 +108,8 @@ type AEDServiceServer interface {
 	Get(context.Context, *AEDFilter) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error)
+	// Get latest LatestRequest for a given symbol, network and period
+	GetLatest(context.Context, *LatestRequest) (*AED, error)
 }
 
 // UnimplementedAEDServiceServer should be embedded to have forward compatible implementations.
@@ -113,6 +127,9 @@ func (UnimplementedAEDServiceServer) Get(context.Context, *AEDFilter) (*AEDs, er
 }
 func (UnimplementedAEDServiceServer) GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAEDsForPeriods not implemented")
+}
+func (UnimplementedAEDServiceServer) GetLatest(context.Context, *LatestRequest) (*AED, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatest not implemented")
 }
 
 // UnsafeAEDServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -198,6 +215,24 @@ func _AEDService_GetAEDsForPeriods_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AEDService_GetLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LatestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AEDServiceServer).GetLatest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AEDService_GetLatest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AEDServiceServer).GetLatest(ctx, req.(*LatestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AEDService_ServiceDesc is the grpc.ServiceDesc for AEDService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -220,6 +255,10 @@ var AEDService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAEDsForPeriods",
 			Handler:    _AEDService_GetAEDsForPeriods_Handler,
+		},
+		{
+			MethodName: "GetLatest",
+			Handler:    _AEDService_GetLatest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
