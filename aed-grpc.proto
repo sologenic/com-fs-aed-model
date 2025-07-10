@@ -35,6 +35,7 @@ message AEDFilter {
     bool AllowCache = 8;
     string OrganizationID = 9;
     Series Series = 10; // Series to filter the AEDs by
+    optional string UserID = 11;
 }
 
 message PeriodsFilter {
@@ -50,6 +51,9 @@ message PeriodBucket {
 message LatestRequest {
     string Symbol = 1;
     metadata.Network Network = 2;
-    Series Series = 4; // Series to filter the AEDs by
-    string OrganizationID = 5;
+    Series Series = 3; // Series to filter the AEDs by
+    string OrganizationID = 4;
+    // Use the from and to timestamps to filter the latest AED in the given time range
+    optional google.protobuf.Timestamp From = 5;
+    optional google.protobuf.Timestamp To = 6;
 }
