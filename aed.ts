@@ -307,7 +307,7 @@ export interface AED {
   UserID?: string | undefined;
   Value: Value[];
   Series: Series;
-  Source: Source;
+  Source?: Source | undefined;
 }
 
 export interface Value {
@@ -401,7 +401,7 @@ function createBaseAED(): AED {
     UserID: undefined,
     Value: [],
     Series: 0,
-    Source: 0,
+    Source: undefined,
   };
 }
 
@@ -431,7 +431,7 @@ export const AED = {
     if (message.Series !== 0) {
       writer.uint32(808).int32(message.Series);
     }
-    if (message.Source !== 0) {
+    if (message.Source !== undefined) {
       writer.uint32(816).int32(message.Source);
     }
     return writer;
@@ -526,7 +526,7 @@ export const AED = {
       UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
       Value: globalThis.Array.isArray(object?.Value) ? object.Value.map((e: any) => Value.fromJSON(e)) : [],
       Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
-      Source: isSet(object.Source) ? sourceFromJSON(object.Source) : 0,
+      Source: isSet(object.Source) ? sourceFromJSON(object.Source) : undefined,
     };
   },
 
@@ -556,7 +556,7 @@ export const AED = {
     if (message.Series !== 0) {
       obj.Series = seriesToJSON(message.Series);
     }
-    if (message.Source !== 0) {
+    if (message.Source !== undefined) {
       obj.Source = sourceToJSON(message.Source);
     }
     return obj;
@@ -579,7 +579,7 @@ export const AED = {
     message.UserID = object.UserID ?? undefined;
     message.Value = object.Value?.map((e) => Value.fromPartial(e)) || [];
     message.Series = object.Series ?? 0;
-    message.Source = object.Source ?? 0;
+    message.Source = object.Source ?? undefined;
     return message;
   },
 };

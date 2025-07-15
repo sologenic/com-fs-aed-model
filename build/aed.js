@@ -341,7 +341,7 @@ function createBaseAED() {
         UserID: undefined,
         Value: [],
         Series: 0,
-        Source: 0,
+        Source: undefined,
     };
 }
 export const AED = {
@@ -370,7 +370,7 @@ export const AED = {
         if (message.Series !== 0) {
             writer.uint32(808).int32(message.Series);
         }
-        if (message.Source !== 0) {
+        if (message.Source !== undefined) {
             writer.uint32(816).int32(message.Source);
         }
         return writer;
@@ -454,7 +454,7 @@ export const AED = {
             UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
             Value: globalThis.Array.isArray(object === null || object === void 0 ? void 0 : object.Value) ? object.Value.map((e) => Value.fromJSON(e)) : [],
             Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
-            Source: isSet(object.Source) ? sourceFromJSON(object.Source) : 0,
+            Source: isSet(object.Source) ? sourceFromJSON(object.Source) : undefined,
         };
     },
     toJSON(message) {
@@ -484,7 +484,7 @@ export const AED = {
         if (message.Series !== 0) {
             obj.Series = seriesToJSON(message.Series);
         }
-        if (message.Source !== 0) {
+        if (message.Source !== undefined) {
             obj.Source = sourceToJSON(message.Source);
         }
         return obj;
@@ -507,7 +507,7 @@ export const AED = {
         message.UserID = (_d = object.UserID) !== null && _d !== void 0 ? _d : undefined;
         message.Value = ((_e = object.Value) === null || _e === void 0 ? void 0 : _e.map((e) => Value.fromPartial(e))) || [];
         message.Series = (_f = object.Series) !== null && _f !== void 0 ? _f : 0;
-        message.Source = (_g = object.Source) !== null && _g !== void 0 ? _g : 0;
+        message.Source = (_g = object.Source) !== null && _g !== void 0 ? _g : undefined;
         return message;
     },
 };

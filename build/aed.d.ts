@@ -74,7 +74,7 @@ export interface AED {
     UserID?: string | undefined;
     Value: Value[];
     Series: Series;
-    Source: Source;
+    Source?: Source | undefined;
 }
 export interface Value {
     Field: Field;

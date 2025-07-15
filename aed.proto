@@ -21,7 +21,7 @@ message AED {
 
     repeated Value Value = 100;
     Series Series = 101;
-    Source Source = 102; 
+    optional Source Source = 102; 
 }
 
 enum Source {
