@@ -1,6 +1,18 @@
 import _m0 from "protobufjs/minimal";
 import { MetaData } from "./sologenic/com-fs-utils-lib/models/metadata/metadata";
 export declare const protobufPackage = "aed";
+export declare enum Source {
+    SOURCE_NOT_USED = 0,
+    /** SOURCE_EXCHANGE - Source: exchange trades */
+    SOURCE_EXCHANGE = 1,
+    /** SOURCE_ATS - Alternative Trading System */
+    SOURCE_ATS = 2,
+    /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
+    SOURCE_DEX = 3,
+    UNRECOGNIZED = -1
+}
+export declare function sourceFromJSON(object: any): Source;
+export declare function sourceToJSON(object: Source): string;
 export declare enum Series {
     SERIES_NOT_USED = 0,
     /** INTERNAL_TRADES - Source: dex trades, Usage: general trade graphs, supports TradeView-like graphing tools (ohlc) */
@@ -53,6 +65,7 @@ export interface AEDs {
 }
 export interface AED {
     OrganizationID: string;
+    /** Denom1:Denom2 */
     Symbol: string;
     Timestamp: Date | undefined;
     Period: Period | undefined;
@@ -61,6 +74,7 @@ export interface AED {
     UserID?: string | undefined;
     Value: Value[];
     Series: Series;
+    Source: Source;
 }
 export interface Value {
     Field: Field;
@@ -107,6 +121,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[] | undefined;
     } & {
         AEDs?: ({
@@ -132,6 +147,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[] & ({
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -155,6 +171,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         } & {
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -204,6 +221,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[]>]: never; }) | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         } & { [K_4 in Exclude<keyof I["AEDs"][number], keyof AED>]: never; })[] & { [K_5 in Exclude<keyof I["AEDs"], keyof {
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -227,6 +245,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[]>]: never; }) | undefined;
     } & { [K_6 in Exclude<keyof I, "AEDs">]: never; }>(base?: I | undefined): AEDs;
     fromPartial<I_1 extends {
@@ -253,6 +272,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[] | undefined;
     } & {
         AEDs?: ({
@@ -278,6 +298,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[] & ({
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -301,6 +322,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         } & {
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -350,6 +372,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[]>]: never; }) | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         } & { [K_11 in Exclude<keyof I_1["AEDs"][number], keyof AED>]: never; })[] & { [K_12 in Exclude<keyof I_1["AEDs"], keyof {
             OrganizationID?: string | undefined;
             Symbol?: string | undefined;
@@ -373,6 +396,7 @@ export declare const AEDs: {
                 BoolVal?: boolean | undefined;
             }[] | undefined;
             Series?: Series | undefined;
+            Source?: Source | undefined;
         }[]>]: never; }) | undefined;
     } & { [K_13 in Exclude<keyof I_1, "AEDs">]: never; }>(object: I_1): AEDs;
 };
@@ -404,6 +428,7 @@ export declare const AED: {
             BoolVal?: boolean | undefined;
         }[] | undefined;
         Series?: Series | undefined;
+        Source?: Source | undefined;
     } & {
         OrganizationID?: string | undefined;
         Symbol?: string | undefined;
@@ -453,6 +478,7 @@ export declare const AED: {
             BoolVal?: boolean | undefined;
         }[]>]: never; }) | undefined;
         Series?: Series | undefined;
+        Source?: Source | undefined;
     } & { [K_4 in Exclude<keyof I, keyof AED>]: never; }>(base?: I | undefined): AED;
     fromPartial<I_1 extends {
         OrganizationID?: string | undefined;
@@ -477,6 +503,7 @@ export declare const AED: {
             BoolVal?: boolean | undefined;
         }[] | undefined;
         Series?: Series | undefined;
+        Source?: Source | undefined;
     } & {
         OrganizationID?: string | undefined;
         Symbol?: string | undefined;
@@ -526,6 +553,7 @@ export declare const AED: {
             BoolVal?: boolean | undefined;
         }[]>]: never; }) | undefined;
         Series?: Series | undefined;
+        Source?: Source | undefined;
     } & { [K_9 in Exclude<keyof I_1, keyof AED>]: never; }>(object: I_1): AED;
 };
 export declare const Value: {

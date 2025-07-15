@@ -12,6 +12,54 @@ import { MetaData } from "./sologenic/com-fs-utils-lib/models/metadata/metadata"
 
 export const protobufPackage = "aed";
 
+export enum Source {
+  SOURCE_NOT_USED = 0,
+  /** SOURCE_EXCHANGE - Source: exchange trades */
+  SOURCE_EXCHANGE = 1,
+  /** SOURCE_ATS - Alternative Trading System */
+  SOURCE_ATS = 2,
+  /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
+  SOURCE_DEX = 3,
+  UNRECOGNIZED = -1,
+}
+
+export function sourceFromJSON(object: any): Source {
+  switch (object) {
+    case 0:
+    case "SOURCE_NOT_USED":
+      return Source.SOURCE_NOT_USED;
+    case 1:
+    case "SOURCE_EXCHANGE":
+      return Source.SOURCE_EXCHANGE;
+    case 2:
+    case "SOURCE_ATS":
+      return Source.SOURCE_ATS;
+    case 3:
+    case "SOURCE_DEX":
+      return Source.SOURCE_DEX;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Source.UNRECOGNIZED;
+  }
+}
+
+export function sourceToJSON(object: Source): string {
+  switch (object) {
+    case Source.SOURCE_NOT_USED:
+      return "SOURCE_NOT_USED";
+    case Source.SOURCE_EXCHANGE:
+      return "SOURCE_EXCHANGE";
+    case Source.SOURCE_ATS:
+      return "SOURCE_ATS";
+    case Source.SOURCE_DEX:
+      return "SOURCE_DEX";
+    case Source.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export enum Series {
   SERIES_NOT_USED = 0,
   /** INTERNAL_TRADES - Source: dex trades, Usage: general trade graphs, supports TradeView-like graphing tools (ohlc) */
@@ -248,6 +296,7 @@ export interface AEDs {
 
 export interface AED {
   OrganizationID: string;
+  /** Denom1:Denom2 */
   Symbol: string;
   Timestamp: Date | undefined;
   Period: Period | undefined;
@@ -258,6 +307,7 @@ export interface AED {
   UserID?: string | undefined;
   Value: Value[];
   Series: Series;
+  Source: Source;
 }
 
 export interface Value {
@@ -351,6 +401,7 @@ function createBaseAED(): AED {
     UserID: undefined,
     Value: [],
     Series: 0,
+    Source: 0,
   };
 }
 
@@ -379,6 +430,9 @@ export const AED = {
     }
     if (message.Series !== 0) {
       writer.uint32(808).int32(message.Series);
+    }
+    if (message.Source !== 0) {
+      writer.uint32(816).int32(message.Source);
     }
     return writer;
   },
@@ -446,6 +500,13 @@ export const AED = {
 
           message.Series = reader.int32() as any;
           continue;
+        case 102:
+          if (tag !== 816) {
+            break;
+          }
+
+          message.Source = reader.int32() as any;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -465,6 +526,7 @@ export const AED = {
       UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
       Value: globalThis.Array.isArray(object?.Value) ? object.Value.map((e: any) => Value.fromJSON(e)) : [],
       Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
+      Source: isSet(object.Source) ? sourceFromJSON(object.Source) : 0,
     };
   },
 
@@ -494,6 +556,9 @@ export const AED = {
     if (message.Series !== 0) {
       obj.Series = seriesToJSON(message.Series);
     }
+    if (message.Source !== 0) {
+      obj.Source = sourceToJSON(message.Source);
+    }
     return obj;
   },
 
@@ -514,6 +579,7 @@ export const AED = {
     message.UserID = object.UserID ?? undefined;
     message.Value = object.Value?.map((e) => Value.fromPartial(e)) || [];
     message.Series = object.Series ?? 0;
+    message.Source = object.Source ?? 0;
     return message;
   },
 };

@@ -13,7 +13,7 @@ message AEDs {
 
 message AED {
     string OrganizationID = 1;
-    string Symbol = 2;
+    string Symbol = 2; // Denom1:Denom2
     google.protobuf.Timestamp Timestamp = 3;
     Period Period = 4;
     metadata.MetaData MetaData = 5;
@@ -21,6 +21,14 @@ message AED {
 
     repeated Value Value = 100;
     Series Series = 101;
+    Source Source = 102; 
+}
+
+enum Source {
+    SOURCE_NOT_USED = 0;
+    SOURCE_EXCHANGE = 1; // Source: exchange trades
+    SOURCE_ATS = 2; // Alternative Trading System
+    SOURCE_DEX = 3; // Decentralized Exchange + AMM (anywhere on the blockchain)
 }
 
 enum Series {

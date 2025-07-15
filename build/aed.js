@@ -9,6 +9,52 @@ import _m0 from "protobufjs/minimal";
 import { Timestamp } from "./google/protobuf/timestamp";
 import { MetaData } from "./sologenic/com-fs-utils-lib/models/metadata/metadata";
 export const protobufPackage = "aed";
+export var Source;
+(function (Source) {
+    Source[Source["SOURCE_NOT_USED"] = 0] = "SOURCE_NOT_USED";
+    /** SOURCE_EXCHANGE - Source: exchange trades */
+    Source[Source["SOURCE_EXCHANGE"] = 1] = "SOURCE_EXCHANGE";
+    /** SOURCE_ATS - Alternative Trading System */
+    Source[Source["SOURCE_ATS"] = 2] = "SOURCE_ATS";
+    /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
+    Source[Source["SOURCE_DEX"] = 3] = "SOURCE_DEX";
+    Source[Source["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(Source || (Source = {}));
+export function sourceFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "SOURCE_NOT_USED":
+            return Source.SOURCE_NOT_USED;
+        case 1:
+        case "SOURCE_EXCHANGE":
+            return Source.SOURCE_EXCHANGE;
+        case 2:
+        case "SOURCE_ATS":
+            return Source.SOURCE_ATS;
+        case 3:
+        case "SOURCE_DEX":
+            return Source.SOURCE_DEX;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return Source.UNRECOGNIZED;
+    }
+}
+export function sourceToJSON(object) {
+    switch (object) {
+        case Source.SOURCE_NOT_USED:
+            return "SOURCE_NOT_USED";
+        case Source.SOURCE_EXCHANGE:
+            return "SOURCE_EXCHANGE";
+        case Source.SOURCE_ATS:
+            return "SOURCE_ATS";
+        case Source.SOURCE_DEX:
+            return "SOURCE_DEX";
+        case Source.UNRECOGNIZED:
+        default:
+            return "UNRECOGNIZED";
+    }
+}
 export var Series;
 (function (Series) {
     Series[Series["SERIES_NOT_USED"] = 0] = "SERIES_NOT_USED";
@@ -295,6 +341,7 @@ function createBaseAED() {
         UserID: undefined,
         Value: [],
         Series: 0,
+        Source: 0,
     };
 }
 export const AED = {
@@ -322,6 +369,9 @@ export const AED = {
         }
         if (message.Series !== 0) {
             writer.uint32(808).int32(message.Series);
+        }
+        if (message.Source !== 0) {
+            writer.uint32(816).int32(message.Source);
         }
         return writer;
     },
@@ -380,6 +430,12 @@ export const AED = {
                     }
                     message.Series = reader.int32();
                     continue;
+                case 102:
+                    if (tag !== 816) {
+                        break;
+                    }
+                    message.Source = reader.int32();
+                    continue;
             }
             if ((tag & 7) === 4 || tag === 0) {
                 break;
@@ -398,6 +454,7 @@ export const AED = {
             UserID: isSet(object.UserID) ? globalThis.String(object.UserID) : undefined,
             Value: globalThis.Array.isArray(object === null || object === void 0 ? void 0 : object.Value) ? object.Value.map((e) => Value.fromJSON(e)) : [],
             Series: isSet(object.Series) ? seriesFromJSON(object.Series) : 0,
+            Source: isSet(object.Source) ? sourceFromJSON(object.Source) : 0,
         };
     },
     toJSON(message) {
@@ -427,13 +484,16 @@ export const AED = {
         if (message.Series !== 0) {
             obj.Series = seriesToJSON(message.Series);
         }
+        if (message.Source !== 0) {
+            obj.Source = sourceToJSON(message.Source);
+        }
         return obj;
     },
     create(base) {
         return AED.fromPartial(base !== null && base !== void 0 ? base : {});
     },
     fromPartial(object) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         const message = createBaseAED();
         message.OrganizationID = (_a = object.OrganizationID) !== null && _a !== void 0 ? _a : "";
         message.Symbol = (_b = object.Symbol) !== null && _b !== void 0 ? _b : "";
@@ -447,6 +507,7 @@ export const AED = {
         message.UserID = (_d = object.UserID) !== null && _d !== void 0 ? _d : undefined;
         message.Value = ((_e = object.Value) === null || _e === void 0 ? void 0 : _e.map((e) => Value.fromPartial(e))) || [];
         message.Series = (_f = object.Series) !== null && _f !== void 0 ? _f : 0;
+        message.Source = (_g = object.Source) !== null && _g !== void 0 ? _g : 0;
         return message;
     },
 };
