@@ -66,6 +66,5 @@ message LatestRequest {
     metadata.Network Network = 2;
     Series Series = 3; // Series to filter the AEDs by
     string OrganizationID = 4;
-    optional Source Source = 5;
-    optional google.protobuf.Timestamp Timestamp = 6; // Optional timestamp to filter the latest AED by
+    google.protobuf.Timestamp Timestamp = 5; // Optional timestamp to filter the latest AED by
 }
