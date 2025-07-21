@@ -12,6 +12,7 @@ import (
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
 	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/sologenic/com-fs-utils-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
@@ -178,13 +179,15 @@ func getAED(
 	organizationID string,
 	assetCache *utilcache.Cache,
 ) (*aedgrpc.AEDs, error) {
-	latestRequest := &aedgrpc.LatestRequest{
+	getForPeriodReq := &aedgrpc.GetForPeriodAndTimestampRequest{
 		Symbol:         symbol,
 		Network:        opt.Network,
 		Series:         opt.Series,
 		OrganizationID: organizationID,
+		Period:         &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1},
+		Timestamp:      timestamppb.Now(), // Will be normalized in the store
 	}
-	latestAED, err := aedClient.GetLatest(aedclient.AuthCtx(ctx), latestRequest)
+	latestAED, err := aedClient.GetForPeriodAndTimestamp(aedclient.AuthCtx(ctx), getForPeriodReq)
 	if err != nil {
 		return nil, fmt.Errorf("error getting latest aed data for %s: %w", symbol, err)
 	}
