@@ -37,6 +37,18 @@ message AEDFilter {
     Series Series = 10; // Series to filter the AEDs by
     optional string UserID = 11;
     optional Source Source = 12;
+    optional int32 Limit = 13; // Limit the number of results returned
+    optional OrderBy OrderBy = 14; // Order by fields
+}
+
+message OrderBy {
+    string Field = 1; // Field to order by
+    Direction Direction = 2; // Direction of the order
+}
+
+enum Direction {
+    ASC = 0; // Ascending order
+    DESC = 1; // Descending order
 }
 
 message PeriodsFilter {
@@ -54,5 +66,6 @@ message LatestRequest {
     metadata.Network Network = 2;
     Series Series = 3; // Series to filter the AEDs by
     string OrganizationID = 4;
-    optional Source Source = 5; 
+    optional Source Source = 5;
+    optional google.protobuf.Timestamp Timestamp = 6; // Optional timestamp to filter the latest AED by
 }
