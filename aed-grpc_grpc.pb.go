@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AEDService_Upsert_FullMethodName            = "/aed.AEDService/Upsert"
-	AEDService_BatchUpsert_FullMethodName       = "/aed.AEDService/BatchUpsert"
-	AEDService_Get_FullMethodName               = "/aed.AEDService/Get"
-	AEDService_GetAEDsForPeriods_FullMethodName = "/aed.AEDService/GetAEDsForPeriods"
-	AEDService_GetLatest_FullMethodName         = "/aed.AEDService/GetLatest"
+	AEDService_Upsert_FullMethodName                   = "/aed.AEDService/Upsert"
+	AEDService_BatchUpsert_FullMethodName              = "/aed.AEDService/BatchUpsert"
+	AEDService_Get_FullMethodName                      = "/aed.AEDService/Get"
+	AEDService_GetAEDsForPeriods_FullMethodName        = "/aed.AEDService/GetAEDsForPeriods"
+	AEDService_GetForPeriodAndTimestamp_FullMethodName = "/aed.AEDService/GetForPeriodAndTimestamp"
 )
 
 // AEDServiceClient is the client API for AEDService service.
@@ -39,8 +39,8 @@ type AEDServiceClient interface {
 	Get(ctx context.Context, in *AEDFilter, opts ...grpc.CallOption) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(ctx context.Context, in *PeriodsFilter, opts ...grpc.CallOption) (*AEDs, error)
-	// Get latest LatestRequest for a given symbol, network and period
-	GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error)
+	// A single lookup using a specific normalized timestamp
+	GetForPeriodAndTimestamp(ctx context.Context, in *GetForPeriodAndTimestampRequest, opts ...grpc.CallOption) (*AED, error)
 }
 
 type aEDServiceClient struct {
@@ -87,9 +87,9 @@ func (c *aEDServiceClient) GetAEDsForPeriods(ctx context.Context, in *PeriodsFil
 	return out, nil
 }
 
-func (c *aEDServiceClient) GetLatest(ctx context.Context, in *LatestRequest, opts ...grpc.CallOption) (*AED, error) {
+func (c *aEDServiceClient) GetForPeriodAndTimestamp(ctx context.Context, in *GetForPeriodAndTimestampRequest, opts ...grpc.CallOption) (*AED, error) {
 	out := new(AED)
-	err := c.cc.Invoke(ctx, AEDService_GetLatest_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, AEDService_GetForPeriodAndTimestamp_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,8 +108,8 @@ type AEDServiceServer interface {
 	Get(context.Context, *AEDFilter) (*AEDs, error)
 	// Get aeds for all the given periods
 	GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error)
-	// Get latest LatestRequest for a given symbol, network and period
-	GetLatest(context.Context, *LatestRequest) (*AED, error)
+	// A single lookup using a specific normalized timestamp
+	GetForPeriodAndTimestamp(context.Context, *GetForPeriodAndTimestampRequest) (*AED, error)
 }
 
 // UnimplementedAEDServiceServer should be embedded to have forward compatible implementations.
@@ -128,8 +128,8 @@ func (UnimplementedAEDServiceServer) Get(context.Context, *AEDFilter) (*AEDs, er
 func (UnimplementedAEDServiceServer) GetAEDsForPeriods(context.Context, *PeriodsFilter) (*AEDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAEDsForPeriods not implemented")
 }
-func (UnimplementedAEDServiceServer) GetLatest(context.Context, *LatestRequest) (*AED, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLatest not implemented")
+func (UnimplementedAEDServiceServer) GetForPeriodAndTimestamp(context.Context, *GetForPeriodAndTimestampRequest) (*AED, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetForPeriodAndTimestamp not implemented")
 }
 
 // UnsafeAEDServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,20 +215,20 @@ func _AEDService_GetAEDsForPeriods_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AEDService_GetLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LatestRequest)
+func _AEDService_GetForPeriodAndTimestamp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetForPeriodAndTimestampRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AEDServiceServer).GetLatest(ctx, in)
+		return srv.(AEDServiceServer).GetForPeriodAndTimestamp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AEDService_GetLatest_FullMethodName,
+		FullMethod: AEDService_GetForPeriodAndTimestamp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AEDServiceServer).GetLatest(ctx, req.(*LatestRequest))
+		return srv.(AEDServiceServer).GetForPeriodAndTimestamp(ctx, req.(*GetForPeriodAndTimestampRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -257,8 +257,8 @@ var AEDService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AEDService_GetAEDsForPeriods_Handler,
 		},
 		{
-			MethodName: "GetLatest",
-			Handler:    _AEDService_GetLatest_Handler,
+			MethodName: "GetForPeriodAndTimestamp",
+			Handler:    _AEDService_GetForPeriodAndTimestamp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
