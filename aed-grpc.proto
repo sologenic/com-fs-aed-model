@@ -18,8 +18,8 @@ service AEDService {
     rpc Get(AEDFilter) returns (AEDs) {}
     // Get aeds for all the given periods
     rpc GetAEDsForPeriods(PeriodsFilter) returns (AEDs) {}
-    // Get latest LatestRequest for a given symbol, network and period
-    rpc GetLatest(LatestRequest) returns (AED) {}
+    // A single lookup using a specific normalized timestamp
+    rpc GetForPeriodAndTimestamp(GetForPeriodAndTimestampRequest) returns (AED) {}
 }
 
 message AEDFilter {
@@ -37,6 +37,18 @@ message AEDFilter {
     Series Series = 10; // Series to filter the AEDs by
     optional string UserID = 11;
     optional Source Source = 12;
+    optional int32 Limit = 13; // Limit the number of results returned
+    optional OrderBy OrderBy = 14; // Order by fields
+}
+
+message OrderBy {
+    string Field = 1; // Field to order by
+    Direction Direction = 2; // Direction of the order
+}
+
+enum Direction {
+    ASC = 0; // Ascending order
+    DESC = 1; // Descending order
 }
 
 message PeriodsFilter {
@@ -49,10 +61,11 @@ message PeriodBucket {
     google.protobuf.Timestamp Timestamp = 2;
 }
 
-message LatestRequest {
+message GetForPeriodAndTimestampRequest {
     string Symbol = 1;
     metadata.Network Network = 2;
     Series Series = 3; // Series to filter the AEDs by
     string OrganizationID = 4;
-    optional Source Source = 5; 
+    Period Period = 5;
+    google.protobuf.Timestamp Timestamp = 6; // To be provided as a normalized timestamp
 }
