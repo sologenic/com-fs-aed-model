@@ -8,6 +8,7 @@ import (
 	"time"
 
 	dec "github.com/shopspring/decimal"
+
 	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
 	organizationdmn "github.com/sologenic/com-fs-admin-organization-model/domain"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"

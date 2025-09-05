@@ -6,14 +6,15 @@ import (
 	sync "sync"
 	"time"
 
+	dec "github.com/shopspring/decimal"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
 	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/sologenic/com-fs-utils-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
@@ -201,6 +202,95 @@ func getAED(
 		return nil, fmt.Errorf("error normalizing aed data for %s: %w", symbol, err)
 	}
 	return &aedgrpc.AEDs{AEDs: []*aedgrpc.AED{normalizedAED}}, nil
+}
+
+// getAED retrieves AED data from the source
+func getAEDForTicker(
+	ctx context.Context,
+	aedClient aedgrpc.AEDServiceClient,
+	assetClient assetgrpc.AssetListServiceClient,
+	orgClient organizationgrpc.OrganizationServiceClient,
+	symbol string,
+	opt *TickerReadOptions,
+	organizationID string,
+	assetCache *utilcache.Cache,
+) (*aedgrpc.AEDs, error) {
+	getForPeriodReq := &aedgrpc.AEDFilter{
+		Symbol:         symbol,
+		Network:        opt.Network,
+		Series:         opt.Series,
+		OrganizationID: organizationID,
+		Period:         &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 15},
+		From:           timestamppb.New(time.Now().Add(-24 * time.Hour)),
+		To:             timestamppb.Now(),
+	}
+	latestAED, err := aedClient.Get(aedclient.AuthCtx(ctx), getForPeriodReq)
+	if err != nil {
+		return nil, fmt.Errorf("error getting latest aed data for %s: %w", symbol, err)
+	}
+	if latestAED == nil || len(latestAED.AEDs) == 0 {
+		return nil, fmt.Errorf("no latest aed data found for %s", symbol)
+	}
+	// Sum the values of the AEDs such that we have a single AED with the sum of the values
+	sumAED := &aedgrpc.AED{
+		Symbol:         latestAED.AEDs[0].Symbol,
+		OrganizationID: latestAED.AEDs[0].OrganizationID,
+		Timestamp:      latestAED.AEDs[0].Timestamp,
+		Period:         latestAED.AEDs[0].Period,
+		MetaData:       latestAED.AEDs[0].MetaData,
+		Value:          latestAED.AEDs[0].Value,
+	}
+	network := latestAED.AEDs[0].MetaData.Network
+	symb, err := assetdmnsymbol.NewSymbolFromString(latestAED.AEDs[0].Symbol)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse symbol: %w", err)
+	}
+	// some placeholders so that we can set the final value object:
+	closeVal := 0.0
+	highVal := 0.0
+	lowVal := 0.0
+	volumeVal := 0.0
+	invVolumeVal := 0.0
+
+	basePrecision, quotePrecision, err := Precisions(ctx, assetClient, orgClient, network, symb, organizationID, assetCache)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch precisions for %v: %w", symbol, err)
+	}
+	mult := dec.New(1, int32(basePrecision)).Div(dec.New(1, int32(quotePrecision))).InexactFloat64()
+	for _, aed := range latestAED.AEDs {
+		for _, v := range aed.Value {
+			switch v.Field {
+			case aedgrpc.Field_CLOSE:
+				normalizedVal := closeVal * mult
+				closeVal = normalizedVal
+			case aedgrpc.Field_HIGH:
+				normalizedVal := highVal * mult
+				highVal = normalizedVal
+			case aedgrpc.Field_LOW:
+				normalizedVal := lowVal * mult
+				lowVal = normalizedVal
+			case aedgrpc.Field_VOLUME:
+				// Volume is in subunit notation
+				// We need the volume in unit notation: volume * 10^-basePrecision
+				normalizedVal := volumeVal * dec.New(1, int32(-basePrecision)).InexactFloat64()
+				volumeVal += normalizedVal
+			case aedgrpc.Field_INVERTED_VOLUME:
+				// Inverted volume is in subunit notation
+				// We need the quote volume in unit notation: volume * 10^-quotePrecision
+				normalizedVal := invVolumeVal * dec.New(1, int32(-quotePrecision)).InexactFloat64()
+				invVolumeVal += normalizedVal
+			}
+		}
+	}
+	sumAED.Value = []*aedgrpc.Value{
+		{Field: aedgrpc.Field_CLOSE, Float64Val: &closeVal},
+		{Field: aedgrpc.Field_HIGH, Float64Val: &highVal},
+		{Field: aedgrpc.Field_LOW, Float64Val: &lowVal},
+		{Field: aedgrpc.Field_VOLUME, Float64Val: &volumeVal},
+		{Field: aedgrpc.Field_INVERTED_VOLUME, Float64Val: &invVolumeVal},
+		{Field: aedgrpc.Field_OPEN, Float64Val: sumAED.Value[0].Float64Val},
+	}
+	return &aedgrpc.AEDs{AEDs: []*aedgrpc.AED{sumAED}}, nil
 }
 
 // AEDsToTickers converts the aed data to ticker data
