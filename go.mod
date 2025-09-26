@@ -6,7 +6,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20250611221146-4e5e81322e2d
-	github.com/sologenic/com-fs-asset-model v0.0.0-20250923172806-23e0eb1f12a8
+	github.com/sologenic/com-fs-asset-model v0.0.0-20250925170144-af5f68fe1d32
 	github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250610001621-c73b8e9ef79e
 	github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250610001621-c73b8e9ef79e
 	github.com/sologenic/com-fs-utils-lib/go/logger v0.0.0-20250610001621-c73b8e9ef79e
