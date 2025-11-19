@@ -1,0 +1,21 @@
+name: Trigger Docs Update
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.md"
+
+jobs:
+  notify-docs-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch to docs repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DOCS_AGGREGATOR_REPO_PAT }}
+          repository: sologenic/com-fs-documentation-aggregator
+          event-type: update-docs
+          client-payload: '{"source_repo": "${{ github.repository }}", "ref": "${{ github.ref }}"}'
