@@ -20,7 +20,7 @@
 
 The Aed provides a comprehensive data structure for managing aed within the system. This model supports organizational context: links items to organizations via organizationid, metadata and audit: includes metadata and audit trails for tracking changes, identification: provides unique identifiers for aed, and more. 
 
-Key features of the {model_name.lower()} model include:
+Key features of the aed model include:
 - **Organizational Context**: Links items to organizations via OrganizationID
 - **Metadata and Audit**: Includes metadata and audit trails for tracking changes
 - **Identification**: Provides unique identifiers for aed
@@ -66,7 +66,7 @@ The `AED` message provides aed data and operations.
 |------------|------|-------------------|-------------|
 | OrganizationID | `string` | Required | UUID of the organization this item belongs to |
 | Symbol | `string` | Required | Denom1:Denom2 |
-| Timestamp | `google.protobuf.Timestamp` | Required | Timestamp field |
+| Timestamp | `google.protobuf.Timestamp` | Required | Timestamp information |
 | Period | `Period` | Required | Period field |
 | MetaData | `metadata.MetaData` | Required | Metadata information including network and version details |
 | UserID | `string` | Optional | Time series stored at user level for profit/loss, etc |
