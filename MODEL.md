@@ -11,6 +11,7 @@
     - [Period](#period)
   - [Enums](#enums)
     - [Source](#source)
+    - [Series](#series)
     - [Field](#field)
     - [PeriodType](#periodtype)
 - [Version Information](#version-information)
@@ -131,6 +132,48 @@ The `Period` message provides period data and operations.
 
 The `Source` enum defines the possible states or types for aed, allowing for classification and state management.
 
+**Value Table:**
+
+| Value Name | Number | Description |
+|------------|--------|-------------|
+| SOURCE_NOT_USED | 0 | Default/unused value (protobuf convention) |
+| SOURCE_EXCHANGE | 1 | Source Exchange state or type |
+| SOURCE_ATS | 2 | Source Ats state or type |
+| SOURCE_DEX | 3 | Source Dex state or type |
+
+**Use Cases:**
+- Setting source for items
+- Filtering items by source in queries
+- Enforcing business logic based on source
+
+**Important Notes:**
+- Values with `NOT_USED` prefix or number 0 follow protobuf conventions for default enum values and should not be actively used
+- Only valid source values should be used in production code
+- Source changes should be tracked in audit trails for compliance purposes
+
+#### Series {#series}
+
+The `Series` enum defines the possible states or types for aed, allowing for classification and state management.
+
+**Value Table:**
+
+| Value Name | Number | Description |
+|------------|--------|-------------|
+| SERIES_NOT_USED | 0 | Default/unused value (protobuf convention) |
+| INTERNAL_TRADES | 1 | Internal Trades state or type |
+| MARKET_DATA_STOCKS | 2 | Market Data Stocks state or type |
+| USER_PERFORMANCE | 3 | User Performance state or type |
+
+**Use Cases:**
+- Setting series for items
+- Filtering items by series in queries
+- Enforcing business logic based on series
+
+**Important Notes:**
+- Values with `NOT_USED` prefix or number 0 follow protobuf conventions for default enum values and should not be actively used
+- Only valid series values should be used in production code
+- Series changes should be tracked in audit trails for compliance purposes
+
 #### Field {#field}
 
 The `Field` enum defines the possible states or types for aed, allowing for classification and state management.
@@ -139,7 +182,20 @@ The `Field` enum defines the possible states or types for aed, allowing for clas
 
 | Value Name | Number | Description |
 |------------|--------|-------------|
-| OSE_TIME | 13 | Ose Time state or type |
+| FIELD_NOT_USED | 0 | Default/unused value (protobuf convention) |
+| OPEN | 1 | Open state or type |
+| HIGH | 2 | High state or type |
+| LOW | 3 | Low state or type |
+| CLOSE | 4 | Close state or type |
+| VOLUME | 5 | Volume state or type |
+| NUMBER_OF_TRADES | 6 | Number Of Trades state or type |
+| INVERTED_VOLUME | 7 | Inverted Volume state or type |
+| MARKET_CAP | 8 | Market Cap state or type |
+| EPS | 9 | Eps state or type |
+| PE_RATIO | 10 | Pe Ratio state or type |
+| YIELD | 11 | Yield state or type |
+| OPEN_TIME | 12 | Open Time state or type |
+| CLOSE_TIME | 13 | Close Time state or type |
 | FIRST_PRICE | 14 | First Price state or type |
 | LAST_PRICE | 15 | Last Price state or type |
 
@@ -149,6 +205,7 @@ The `Field` enum defines the possible states or types for aed, allowing for clas
 - Enforcing business logic based on field
 
 **Important Notes:**
+- Values with `NOT_USED` prefix or number 0 follow protobuf conventions for default enum values and should not be actively used
 - Only valid field values should be used in production code
 - Field changes should be tracked in audit trails for compliance purposes
 
@@ -160,6 +217,11 @@ The `PeriodType` enum defines the possible states or types for aed, allowing for
 
 | Value Name | Number | Description |
 |------------|--------|-------------|
+| PERIOD_TYPE_DO_NOT_USE | 0 | Default/unused value (protobuf convention) |
+| PERIOD_TYPE_MINUTE | 1 | Period Type Minute state or type |
+| PERIOD_TYPE_HOUR | 2 | Period Type Hour state or type |
+| PERIOD_TYPE_DAY | 3 | Period Type Day state or type |
+| PERIOD_TYPE_WEEK | 4 | Period Type Week state or type |
 | PERIOD_TYPE_MONTH | 5 | Period Type Month state or type |
 | PERIOD_TYPE_YEAR | 6 | Period Type Year state or type |
 
@@ -169,6 +231,7 @@ The `PeriodType` enum defines the possible states or types for aed, allowing for
 - Enforcing business logic based on periodtype
 
 **Important Notes:**
+- Values with `NOT_USED` prefix or number 0 follow protobuf conventions for default enum values and should not be actively used
 - Only valid periodtype values should be used in production code
 - PeriodType changes should be tracked in audit trails for compliance purposes
 
