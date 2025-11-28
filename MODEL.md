@@ -16,7 +16,11 @@
 
 ## Overview
 
-The Aed provides a comprehensive data structure for managing aed within the system.
+The Aed provides a comprehensive data structure for managing aed within the system. This model supports identification: provides unique identifiers for aed, and more. 
+
+Key features of the {model_name.lower()} model include:
+- **Identification**: Provides unique identifiers for aed
+
 ## aed.proto
 
 ### Package Information
@@ -38,6 +42,7 @@ The `AEDs` message represents a collection of aed with pagination support for ha
 
 | Field Name | Type | Required/Optional | Description |
 |------------|------|-------------------|-------------|
+| UserID | `string` | Optional | Time series stored at user level for profit/loss, etc |
 | Value | `Value` | Optional | Value field |
 | Series | `Series` | Required | Series field |
 | Source | `Source` | Optional | Source field |
@@ -48,7 +53,7 @@ The `AEDs` message represents a collection of aed with pagination support for ha
 - Handling large aeds efficiently
 
 **Important Notes:**
-- This message provides the aeds representation
+- The `UserID` field must match a valid identifier format
 
 #### Value {#value}
 
