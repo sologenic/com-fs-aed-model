@@ -6,7 +6,9 @@
 - [aed.proto](#aed)
   - [Messages](#messages)
     - [AEDs](#aeds)
+    - [AED](#aed)
     - [Value](#value)
+    - [Period](#period)
   - [Enums](#enums)
     - [Source](#source)
     - [Field](#field)
@@ -16,9 +18,11 @@
 
 ## Overview
 
-The Aed provides a comprehensive data structure for managing aed within the system. This model supports identification: provides unique identifiers for aed, and more. 
+The Aed provides a comprehensive data structure for managing aed within the system. This model supports organizational context: links items to organizations via organizationid, metadata and audit: includes metadata and audit trails for tracking changes, identification: provides unique identifiers for aed, and more. 
 
 Key features of the {model_name.lower()} model include:
+- **Organizational Context**: Links items to organizations via OrganizationID
+- **Metadata and Audit**: Includes metadata and audit trails for tracking changes
 - **Identification**: Provides unique identifiers for aed
 
 ## aed.proto
@@ -42,10 +46,7 @@ The `AEDs` message represents a collection of aed with pagination support for ha
 
 | Field Name | Type | Required/Optional | Description |
 |------------|------|-------------------|-------------|
-| UserID | `string` | Optional | Time series stored at user level for profit/loss, etc |
-| Value | `Value` | Optional | Value field |
-| Series | `Series` | Required | Series field |
-| Source | `Source` | Optional | Source field |
+| AEDs | `AED` | Optional | AEDs field |
 
 **Use Cases:**
 - Returning paginated lists of aed from queries or searches
@@ -53,11 +54,76 @@ The `AEDs` message represents a collection of aed with pagination support for ha
 - Handling large aeds efficiently
 
 **Important Notes:**
+- This message provides the aeds representation
+
+#### AED {#aed}
+
+The `AED` message provides aed data and operations.
+
+**Field Table:**
+
+| Field Name | Type | Required/Optional | Description |
+|------------|------|-------------------|-------------|
+| OrganizationID | `string` | Required | UUID of the organization this item belongs to |
+| Symbol | `string` | Required | Denom1:Denom2 |
+| Timestamp | `google.protobuf.Timestamp` | Required | Timestamp field |
+| Period | `Period` | Required | Period field |
+| MetaData | `metadata.MetaData` | Required | Metadata information including network and version details |
+| UserID | `string` | Optional | Time series stored at user level for profit/loss, etc |
+| Value | `Value` | Optional | Value field |
+| Series | `Series` | Required | Series field |
+| Source | `Source` | Optional | Source field |
+
+**Use Cases:**
+- Creating new aed records
+- Retrieving aed information
+- Updating aed data
+- Associating items with specific organizations
+
+**Important Notes:**
+- The `OrganizationID` must be a valid UUID format
 - The `UserID` field must match a valid identifier format
 
 #### Value {#value}
 
 The `Value` message provides value data and operations.
+
+**Field Table:**
+
+| Field Name | Type | Required/Optional | Description |
+|------------|------|-------------------|-------------|
+| Field | `Field` | Required | Field field |
+| StringVal | `string` | Optional | String value |
+| Int64Val | `int64` | Optional | Integer value |
+| Float64Val | `double` | Optional | Float value |
+| BoolVal | `bool` | Optional | Boolean value |
+
+**Use Cases:**
+- Creating new value records
+- Retrieving value information
+- Updating value data
+
+**Important Notes:**
+- This message provides the value representation
+
+#### Period {#period}
+
+The `Period` message provides period data and operations.
+
+**Field Table:**
+
+| Field Name | Type | Required/Optional | Description |
+|------------|------|-------------------|-------------|
+| Type | `PeriodType` | Required | Type classification for this item (see related enum) |
+| Duration | `int32` | Required | The duration of the indicated period (e.g 1 minute, 3 minutes, etc) |
+
+**Use Cases:**
+- Creating new period records
+- Retrieving period information
+- Updating period data
+
+**Important Notes:**
+- This message provides the period representation
 
 ### Enums
 
