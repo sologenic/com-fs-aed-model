@@ -9,6 +9,8 @@ export declare enum Source {
     SOURCE_ATS = 2,
     /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
     SOURCE_DEX = 3,
+    /** SOURCE_INTERNAL - eg. admin dashboard */
+    SOURCE_INTERNAL = 4,
     UNRECOGNIZED = -1
 }
 export declare function sourceFromJSON(object: any): Source;
@@ -21,6 +23,8 @@ export declare enum Series {
     MARKET_DATA_STOCKS = 2,
     /** USER_PERFORMANCE - Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods */
     USER_PERFORMANCE = 3,
+    /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
+    BILLING = 4,
     UNRECOGNIZED = -1
 }
 export declare function seriesFromJSON(object: any): Series;

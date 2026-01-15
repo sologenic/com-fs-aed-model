@@ -20,6 +20,8 @@ export enum Source {
   SOURCE_ATS = 2,
   /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
   SOURCE_DEX = 3,
+  /** SOURCE_INTERNAL - eg. admin dashboard */
+  SOURCE_INTERNAL = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -37,6 +39,9 @@ export function sourceFromJSON(object: any): Source {
     case 3:
     case "SOURCE_DEX":
       return Source.SOURCE_DEX;
+    case 4:
+    case "SOURCE_INTERNAL":
+      return Source.SOURCE_INTERNAL;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -54,6 +59,8 @@ export function sourceToJSON(object: Source): string {
       return "SOURCE_ATS";
     case Source.SOURCE_DEX:
       return "SOURCE_DEX";
+    case Source.SOURCE_INTERNAL:
+      return "SOURCE_INTERNAL";
     case Source.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -68,6 +75,8 @@ export enum Series {
   MARKET_DATA_STOCKS = 2,
   /** USER_PERFORMANCE - Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods */
   USER_PERFORMANCE = 3,
+  /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
+  BILLING = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -85,6 +94,9 @@ export function seriesFromJSON(object: any): Series {
     case 3:
     case "USER_PERFORMANCE":
       return Series.USER_PERFORMANCE;
+    case 4:
+    case "BILLING":
+      return Series.BILLING;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -102,6 +114,8 @@ export function seriesToJSON(object: Series): string {
       return "MARKET_DATA_STOCKS";
     case Series.USER_PERFORMANCE:
       return "USER_PERFORMANCE";
+    case Series.BILLING:
+      return "BILLING";
     case Series.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

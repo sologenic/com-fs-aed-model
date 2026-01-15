@@ -18,6 +18,8 @@ export var Source;
     Source[Source["SOURCE_ATS"] = 2] = "SOURCE_ATS";
     /** SOURCE_DEX - Decentralized Exchange + AMM (anywhere on the blockchain) */
     Source[Source["SOURCE_DEX"] = 3] = "SOURCE_DEX";
+    /** SOURCE_INTERNAL - eg. admin dashboard */
+    Source[Source["SOURCE_INTERNAL"] = 4] = "SOURCE_INTERNAL";
     Source[Source["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(Source || (Source = {}));
 export function sourceFromJSON(object) {
@@ -34,6 +36,9 @@ export function sourceFromJSON(object) {
         case 3:
         case "SOURCE_DEX":
             return Source.SOURCE_DEX;
+        case 4:
+        case "SOURCE_INTERNAL":
+            return Source.SOURCE_INTERNAL;
         case -1:
         case "UNRECOGNIZED":
         default:
@@ -50,6 +55,8 @@ export function sourceToJSON(object) {
             return "SOURCE_ATS";
         case Source.SOURCE_DEX:
             return "SOURCE_DEX";
+        case Source.SOURCE_INTERNAL:
+            return "SOURCE_INTERNAL";
         case Source.UNRECOGNIZED:
         default:
             return "UNRECOGNIZED";
@@ -64,6 +71,8 @@ export var Series;
     Series[Series["MARKET_DATA_STOCKS"] = 2] = "MARKET_DATA_STOCKS";
     /** USER_PERFORMANCE - Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods */
     Series[Series["USER_PERFORMANCE"] = 3] = "USER_PERFORMANCE";
+    /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
+    Series[Series["BILLING"] = 4] = "BILLING";
     Series[Series["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(Series || (Series = {}));
 export function seriesFromJSON(object) {
@@ -80,6 +89,9 @@ export function seriesFromJSON(object) {
         case 3:
         case "USER_PERFORMANCE":
             return Series.USER_PERFORMANCE;
+        case 4:
+        case "BILLING":
+            return Series.BILLING;
         case -1:
         case "UNRECOGNIZED":
         default:
@@ -96,6 +108,8 @@ export function seriesToJSON(object) {
             return "MARKET_DATA_STOCKS";
         case Series.USER_PERFORMANCE:
             return "USER_PERFORMANCE";
+        case Series.BILLING:
+            return "BILLING";
         case Series.UNRECOGNIZED:
         default:
             return "UNRECOGNIZED";
