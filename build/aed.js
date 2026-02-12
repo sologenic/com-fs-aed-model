@@ -73,6 +73,8 @@ export var Series;
     Series[Series["USER_PERFORMANCE"] = 3] = "USER_PERFORMANCE";
     /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
     Series[Series["BILLING"] = 4] = "BILLING";
+    /** REFERRAL - Source: referral data, Usage: tracks referral data for the organization */
+    Series[Series["REFERRAL"] = 5] = "REFERRAL";
     Series[Series["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
 })(Series || (Series = {}));
 export function seriesFromJSON(object) {
@@ -92,6 +94,9 @@ export function seriesFromJSON(object) {
         case 4:
         case "BILLING":
             return Series.BILLING;
+        case 5:
+        case "REFERRAL":
+            return Series.REFERRAL;
         case -1:
         case "UNRECOGNIZED":
         default:
@@ -110,6 +115,8 @@ export function seriesToJSON(object) {
             return "USER_PERFORMANCE";
         case Series.BILLING:
             return "BILLING";
+        case Series.REFERRAL:
+            return "REFERRAL";
         case Series.UNRECOGNIZED:
         default:
             return "UNRECOGNIZED";

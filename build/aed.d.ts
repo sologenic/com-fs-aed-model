@@ -25,6 +25,8 @@ export declare enum Series {
     USER_PERFORMANCE = 3,
     /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
     BILLING = 4,
+    /** REFERRAL - Source: referral data, Usage: tracks referral data for the organization */
+    REFERRAL = 5,
     UNRECOGNIZED = -1
 }
 export declare function seriesFromJSON(object: any): Series;

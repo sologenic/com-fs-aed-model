@@ -77,6 +77,8 @@ export enum Series {
   USER_PERFORMANCE = 3,
   /** BILLING - Source: billing data, Usage: tracks billing data for the organization */
   BILLING = 4,
+  /** REFERRAL - Source: referral data, Usage: tracks referral data for the organization */
+  REFERRAL = 5,
   UNRECOGNIZED = -1,
 }
 
@@ -97,6 +99,9 @@ export function seriesFromJSON(object: any): Series {
     case 4:
     case "BILLING":
       return Series.BILLING;
+    case 5:
+    case "REFERRAL":
+      return Series.REFERRAL;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -116,6 +121,8 @@ export function seriesToJSON(object: Series): string {
       return "USER_PERFORMANCE";
     case Series.BILLING:
       return "BILLING";
+    case Series.REFERRAL:
+      return "REFERRAL";
     case Series.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

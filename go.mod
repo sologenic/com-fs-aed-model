@@ -29,6 +29,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
+	github.com/sologenic/com-fs-utils-lib v0.0.0-20260209230957-f3fa46309426 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20250917193130-a63d775c7b6d // indirect
 	github.com/sologenic/fs-utils-lib/go/grpc-client v0.0.0-20250502225811-66b8d7777c07 // indirect
 	github.com/sologenic/fs-utils-lib/go/logger v0.0.0-20250502225811-66b8d7777c07 // indirect

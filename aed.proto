@@ -38,6 +38,7 @@ enum Series {
     MARKET_DATA_STOCKS = 2; // Source: external market data provider for the general stock market (can be more than 1 provider, but only a single provider per stock)
     USER_PERFORMANCE = 3; // Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods 
     BILLING = 4; // Source: billing data, Usage: tracks billing data for the organization
+    REFERRAL = 5; // Source: referral data, Usage: tracks referral data for the organization
 }
 
 message Value {
