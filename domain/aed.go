@@ -17,8 +17,8 @@ import (
 	assetdmn "github.com/sologenic/com-fs-asset-model/domain"
 	assetdmndenom "github.com/sologenic/com-fs-asset-model/domain/denom"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
-	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
-	"github.com/sologenic/com-fs-utils-lib/go/logger"
+	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
+	"github.com/sologenic/com-fs-utils-internal-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
 

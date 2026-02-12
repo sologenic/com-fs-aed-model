@@ -4,7 +4,7 @@ import (
 	"context"
 
 	grpcdef "github.com/sologenic/com-fs-aed-model"
-	grpcclient "github.com/sologenic/com-fs-utils-lib/go/grpc-client"
+	grpcclient "github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client"
 )
 
 const endpoint = "AED_STORE"

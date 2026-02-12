@@ -1,16 +1,16 @@
 module github.com/sologenic/com-fs-aed-model
 
-go 1.24.4
+go 1.25.5
 
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20250611221146-4e5e81322e2d
-	github.com/sologenic/com-fs-asset-model v0.0.0-20250925170144-af5f68fe1d32
-	github.com/sologenic/com-fs-utils-lib/go/cache v0.0.0-20250610001621-c73b8e9ef79e
-	github.com/sologenic/com-fs-utils-lib/go/grpc-client v0.0.0-20250610001621-c73b8e9ef79e
-	github.com/sologenic/com-fs-utils-lib/go/logger v0.0.0-20250610001621-c73b8e9ef79e
-	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20250917193130-a63d775c7b6d
+	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260130220110-f6c703e2b71a
+	github.com/sologenic/com-fs-asset-model v0.0.0-20260130210654-df8aa22e179d
+	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20260130220814-92401870370c
+	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20260130220814-92401870370c
+	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20260130220814-92401870370c
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20260130210252-132d1307ccf3
 	google.golang.org/grpc v1.75.1
 	google.golang.org/protobuf v1.36.9
 )
@@ -29,10 +29,9 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
-	github.com/sologenic/com-fs-utils-lib v0.0.0-20260209230957-f3fa46309426 // indirect
-	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20250917193130-a63d775c7b6d // indirect
-	github.com/sologenic/fs-utils-lib/go/grpc-client v0.0.0-20250502225811-66b8d7777c07 // indirect
-	github.com/sologenic/fs-utils-lib/go/logger v0.0.0-20250502225811-66b8d7777c07 // indirect
+	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20260130170755-ffa545a27df1 // indirect
+	github.com/sologenic/com-fs-utils-lib/models/commission v0.0.0-20260130210252-132d1307ccf3 // indirect
+	github.com/sologenic/com-fs-utils-lib/models/decimal v0.0.0-20260130210043-ec8dfa3922d8 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect

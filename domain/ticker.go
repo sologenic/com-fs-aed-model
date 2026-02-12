@@ -14,8 +14,8 @@ import (
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
-	utilcache "github.com/sologenic/com-fs-utils-lib/go/cache"
-	"github.com/sologenic/com-fs-utils-lib/go/logger"
+	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
+	"github.com/sologenic/com-fs-utils-internal-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
 
