@@ -5,12 +5,12 @@ go 1.25.5
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260130220110-f6c703e2b71a
+	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260429140527-ae11625ecab2
 	github.com/sologenic/com-fs-asset-model v0.0.0-20260220200511-46d15a1c07ab
 	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20260130220814-92401870370c
 	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20260130220814-92401870370c
 	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20260130220814-92401870370c
-	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20260130210252-132d1307ccf3
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20260320214512-1b6fd9577a80
 	google.golang.org/grpc v1.75.1
 	google.golang.org/protobuf v1.36.9
 )
