@@ -11,7 +11,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.8.12",
+    "@grpc/grpc-js": "^1.13.5",
     "protoc-gen-ts": "^0.8.5",
     "ts-proto": "^1.141.0"
   }
