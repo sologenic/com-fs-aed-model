@@ -10,7 +10,7 @@ import (
 	dec "github.com/shopspring/decimal"
 
 	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
-	organizationdmn "github.com/sologenic/com-fs-admin-organization-model/domain"
+	organizationutilities "github.com/sologenic/com-fs-admin-organization-model/utilities"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
 	assetgrpclient "github.com/sologenic/com-fs-asset-model/client"
@@ -324,7 +324,7 @@ func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClien
 }
 
 func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, denom *assetdmndenom.Denom, network metadata.Network, organizationID string, assetCache *utilcache.Cache) (int64, error) {
-	SmartContractIssuerAddr, err := organizationdmn.GetSmartContractIssuerAddr(ctx, orgClient, organizationID, network)
+	SmartContractIssuerAddr, err := organizationutilities.GetWalletAddressForSmartContract(ctx, organizationID, orgClient)
 	if err != nil {
 		logger.Errorf("error getting smart contract issuer address for organization %s: %v", organizationID, err)
 		return 0, fmt.Errorf("failed to get smart contract issuer address: %w", err)
