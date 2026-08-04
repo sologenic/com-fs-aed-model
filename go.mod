@@ -5,11 +5,11 @@ go 1.26.2
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260802103550-2e307c46a2f5
+	github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260803153514-0a176ee52c95
 	github.com/sologenic/com-fs-asset-model v0.0.0-20260728114554-66e24ac9384a
 	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20260730214802-a52f4b3ae374
-	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20260730214802-a52f4b3ae374
-	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20260730214802-a52f4b3ae374
+	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20260803104838-841a35e82fd8
+	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20260803104838-841a35e82fd8
 	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20260730213506-b9cb03b766e3
 	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.11
@@ -31,7 +31,7 @@ require (
 	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
-	github.com/sologenic/com-fs-admin-smart-contract-model v0.0.0-20260731115244-6b4757f9df10 // indirect
+	github.com/sologenic/com-fs-admin-smart-contract-model v0.0.0-20260803153029-07b9fe6c0e3f // indirect
 	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20260730214802-a52f4b3ae374 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20260730213506-b9cb03b766e3 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/commission v0.0.0-20260730213506-b9cb03b766e3 // indirect
