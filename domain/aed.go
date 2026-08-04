@@ -324,11 +324,8 @@ func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClien
 }
 
 func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, denom *assetdmndenom.Denom, network metadata.Network, organizationID string, assetCache *utilcache.Cache) (int64, error) {
-	SmartContractIssuerAddr, err := organizationutilities.GetWalletAddress(ctx, organizationID, organizationgrpc.PurposeType_BROKER_ORACLE, orgClient)
-	if err != nil {
-		// PurposeType(1) is the legacy SMART_CONTRACT value kept for existing seed phrases.
-		SmartContractIssuerAddr, err = organizationutilities.GetWalletAddress(ctx, organizationID, organizationgrpc.PurposeType(1), orgClient)
-	}
+	// PurposeType(1) is SMART_CONTRACT (deprecated in proto, on pause). SoloTex still uses this seed purpose.
+	SmartContractIssuerAddr, err := organizationutilities.GetWalletAddress(ctx, organizationID, organizationgrpc.PurposeType(1), orgClient)
 	if err != nil {
 		logger.Errorf("error getting smart contract issuer address for organization %s: %v", organizationID, err)
 		return 0, fmt.Errorf("failed to get smart contract issuer address: %w", err)
