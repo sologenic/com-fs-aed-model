@@ -21,6 +21,7 @@ import (
 const (
 	MaxTickerSymbolsNumber = 40
 	DefaultTickerPeriod    = 24 * time.Hour
+	DefaultCacheDuration   = 1 * time.Minute
 )
 
 type Tickers map[string]*aedgrpc.AED
