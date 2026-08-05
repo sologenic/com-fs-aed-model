@@ -325,6 +325,8 @@ func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClien
 
 func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, orgClient organizationgrpc.OrganizationServiceClient, denom *assetdmndenom.Denom, network metadata.Network, organizationID string, assetCache *utilcache.Cache) (int64, error) {
 	//nolint:staticcheck // PurposeType_SMART_CONTRACT is deprecated in proto but still the correct seed purpose for issuer lookup.
+	// TODO: Double check if this is correct.
+	// Not sure why smart contract issuer address is used here because assets are issued by smart contract and it means that contract address is the issuer and appears inside denom.
 	SmartContractIssuerAddr, err := organizationutilities.GetWalletAddress(ctx, organizationID, organizationgrpc.PurposeType_SMART_CONTRACT, orgClient)
 	if err != nil {
 		logger.Errorf("error getting smart contract issuer address for organization %s: %v", organizationID, err)
