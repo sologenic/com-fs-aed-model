@@ -43,8 +43,6 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
 github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
 github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260803153514-0a176ee52c95 h1:VYGsVv7T2HrDvdpOcUcktjX3ylfcosE4I8CKGDw1KqE=
 github.com/sologenic/com-fs-admin-organization-model v0.0.0-20260803153514-0a176ee52c95/go.mod h1:G01hS67qTwgpAHg0v43hA1Lom7vA/IPDGAjNId3Mw7A=
-github.com/sologenic/com-fs-admin-smart-contract-model v0.0.0-20260803153029-07b9fe6c0e3f h1:4mRj0kAIqZa9oQCv5BNdXgLziDiR3eq3LjZ8k2fKvIw=
-github.com/sologenic/com-fs-admin-smart-contract-model v0.0.0-20260803153029-07b9fe6c0e3f/go.mod h1:mHL+vdwxTDe4CW3FuyhocZ5UbvKnhnMovMlLSiPObQU=
 github.com/sologenic/com-fs-asset-model v0.0.0-20260728114554-66e24ac9384a h1:wt/C5TRhoJhyPc+uuearInNomDKVg2MgdFtouS4uYuw=
 github.com/sologenic/com-fs-asset-model v0.0.0-20260728114554-66e24ac9384a/go.mod h1:mM0cGsLvY4hzxoJe2aX0UZPLWkIDYmoFuO9Isc/yxxE=
 github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20260730214802-a52f4b3ae374 h1:9H/iaOpglVxGN3kNYOfJkHqWeWUmaQzYK0UfhaNWI6U=

@@ -31,7 +31,6 @@ require (
 	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
-	github.com/sologenic/com-fs-admin-smart-contract-model v0.0.0-20260803153029-07b9fe6c0e3f // indirect
 	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20260730214802-a52f4b3ae374 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/audit v0.0.0-20260730213506-b9cb03b766e3 // indirect
 	github.com/sologenic/com-fs-utils-lib/models/commission v0.0.0-20260730213506-b9cb03b766e3 // indirect

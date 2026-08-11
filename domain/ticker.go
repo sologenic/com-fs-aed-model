@@ -195,7 +195,7 @@ func getAED(
 		return nil, fmt.Errorf("no latest aed data found for %s", symbol)
 	}
 	// Normalize the AED data
-	normalizedAED, err := NormalizeAED(ctx, assetClient, orgClient, latestAED, organizationID, assetCache)
+	normalizedAED, err := NormalizeAED(ctx, assetClient, latestAED, assetCache)
 	if err != nil {
 		logger.Errorf("Error normalizing AED %v: %v", latestAED, err)
 		return nil, fmt.Errorf("error normalizing aed data for %s: %w", symbol, err)
