@@ -12,7 +12,7 @@ import (
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
-	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
+	assetdmnpair "github.com/sologenic/com-fs-asset-model/domain/pair"
 	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
 	"github.com/sologenic/com-fs-utils-internal-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
@@ -75,7 +75,7 @@ func uniqueSymbols(symbols []string) []string {
 }
 
 func validSymbol(strSymbol string) bool {
-	_, err := assetdmnsymbol.NewSymbolFromString(strSymbol)
+	_, err := assetdmnpair.Parse(strSymbol)
 	return err == nil
 }
 

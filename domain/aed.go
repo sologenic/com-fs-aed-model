@@ -5,15 +5,12 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"time"
 
 	dec "github.com/shopspring/decimal"
 
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	assetgrpc "github.com/sologenic/com-fs-asset-model"
-	assetgrpclient "github.com/sologenic/com-fs-asset-model/client"
-	assetdmndenom "github.com/sologenic/com-fs-asset-model/domain/denom"
-	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
+	assetdmnpair "github.com/sologenic/com-fs-asset-model/domain/pair"
 	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
@@ -257,13 +254,13 @@ AED data is stored in the subunit price and volume notation of the orders.
 This function converts the subunit price and volume to human readable price and volume.
 */
 func NormalizeAED(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, aed *aedgrpc.AED, assetCache *utilcache.Cache) (*aedgrpc.AED, error) {
-	symbol, err := assetdmnsymbol.NewSymbolFromString(aed.Symbol) // {denom1}:{denom2}
+	_, err := assetdmnpair.Parse(aed.Symbol) // {denom1}:{denom2}
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse symbol: %w", err)
 	}
-	basePrecision, quotePrecision, err := Precisions(ctx, assetClient, aed.MetaData.Network, symbol, assetCache)
+	basePrecision, quotePrecision, err := Precisions(ctx, assetClient, aed.MetaData.Network, assetCache)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch precisions for %v: %w", symbol, err)
+		return nil, fmt.Errorf("failed to fetch precisions for %v: %w", aed.Symbol, err)
 	}
 	// Price is in subunit notation (subunitBase/subunitQuote)
 	// We need the prices in unit notation: (base/quote) => price * 10^basePrecision/10^quotePrecision
@@ -306,46 +303,13 @@ func NormalizeAED(ctx context.Context, assetClient assetgrpc.AssetListServiceCli
 	return aed, nil
 }
 
-// Get the asset from the asset service to be able to present the correct precision to the user
-func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, network metadata.Network, symbol *assetdmnsymbol.Symbol, assetCache *utilcache.Cache) (int64, int64, error) {
-	basePrecision, err := getPrecision(ctx, assetClient, symbol.Base, network, assetCache)
-	if err != nil {
-		return 0, 0, err
-	}
-	quotePrecision, err := getPrecision(ctx, assetClient, symbol.Quote, network, assetCache)
-	if err != nil {
-		return 0, 0, err
-	}
-	return basePrecision, quotePrecision, nil
-}
-
-func getPrecision(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, denom *assetdmndenom.Denom, network metadata.Network, assetCache *utilcache.Cache) (int64, error) {
-	assetKey := denom.ToString()
-	assetCache.Mutex.RLock()
-	cur, ok := assetCache.Data[assetCacheKey(assetKey, network)]
-	assetCache.Mutex.RUnlock()
-	if ok {
-		asset, ok := cur.Value.(*assetgrpc.Asset)
-		if ok && asset.AssetDetails != nil && asset.AssetDetails.Denom != nil {
-			return asset.AssetDetails.Denom.Precision, nil
-		}
-	}
-	asset, err := assetClient.GetAsset(assetgrpclient.AuthCtx(ctx), &assetgrpc.AssetKey{Key: assetKey})
-	if err != nil {
-		return 0, err
-	}
-	if asset.AssetDetails == nil || asset.AssetDetails.Denom == nil {
-		return 0, fmt.Errorf("precision not found for %s", denom.ToString())
-	}
-	assetCache.Mutex.Lock()
-	assetCache.Data[assetCacheKey(assetKey, network)] = &utilcache.LockableCache{
-		Value:       asset,
-		LastUpdated: time.Now(),
-	}
-	assetCache.Mutex.Unlock()
-	return asset.AssetDetails.Denom.Precision, nil
-}
-
-func assetCacheKey(denom string, network metadata.Network) string {
-	return fmt.Sprintf("%s-%d", denom, network)
+// Precisions returns the base and quote display precision.
+// Flat assets always use asset.DefaultPrecision (no per-denom Precision field).
+func Precisions(ctx context.Context, assetClient assetgrpc.AssetListServiceClient, network metadata.Network, assetCache *utilcache.Cache) (int64, int64, error) {
+	_ = ctx
+	_ = assetClient
+	_ = network
+	_ = assetCache
+	p := int64(assetgrpc.DefaultPrecision)
+	return p, p, nil
 }
