@@ -8,11 +8,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	organizationgrpc "github.com/sologenic/com-fs-admin-organization-model"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
 	aedclient "github.com/sologenic/com-fs-aed-model/client"
-	assetgrpc "github.com/sologenic/com-fs-asset-model"
-	assetdmnsymbol "github.com/sologenic/com-fs-asset-model/domain/symbol"
+	assetdmnpair "github.com/sologenic/com-fs-asset-model/domain/pair"
 	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
 	"github.com/sologenic/com-fs-utils-internal-lib/go/logger"
 	"github.com/sologenic/com-fs-utils-lib/models/metadata"
@@ -75,7 +73,7 @@ func uniqueSymbols(symbols []string) []string {
 }
 
 func validSymbol(strSymbol string) bool {
-	_, err := assetdmnsymbol.NewSymbolFromString(strSymbol)
+	_, err := assetdmnpair.Parse(strSymbol)
 	return err == nil
 }
 
@@ -83,14 +81,11 @@ func validSymbol(strSymbol string) bool {
 func GetTickers(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
-	assetClient assetgrpc.AssetListServiceClient,
-	orgClient organizationgrpc.OrganizationServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
 	tickerCache *utilcache.Cache,
-	assetCache *utilcache.Cache,
 ) *TickerResponse {
-	retvals := getTickers(ctx, aedClient, assetClient, orgClient, opt, organizationID, tickerCache, assetCache)
+	retvals := getTickers(ctx, aedClient, opt, organizationID, tickerCache)
 	tickers := tickersToHTTP(retvals, opt)
 	return tickers.ToResponse()
 }
@@ -126,12 +121,9 @@ func tickersToHTTP(tickers *Tickers, opt *TickerReadOptions) *Tickers {
 func getTickers(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
-	assetClient assetgrpc.AssetListServiceClient,
-	orgClient organizationgrpc.OrganizationServiceClient,
 	opt *TickerReadOptions,
 	organizationID string,
 	tickerCache *utilcache.Cache,
-	assetCache *utilcache.Cache,
 ) *Tickers {
 	// Retrieve the tickers from the AED service:
 	tickerAEDs := make(map[string]*aedgrpc.AED)
@@ -151,7 +143,7 @@ func getTickers(
 		tickerCache.Mutex.RUnlock()
 		wg.Add(1)
 		go func(symbol string) {
-			baseAEDs, err := getAED(ctx, aedClient, assetClient, orgClient, symbol, opt, organizationID, assetCache)
+			baseAEDs, err := getAED(ctx, aedClient, symbol, opt, organizationID)
 			if err != nil {
 				logger.Errorf("(no cache) Error getting aed data for %s: %s", symbol, err.Error())
 				wg.Done()
@@ -172,12 +164,9 @@ func getTickers(
 func getAED(
 	ctx context.Context,
 	aedClient aedgrpc.AEDServiceClient,
-	assetClient assetgrpc.AssetListServiceClient,
-	orgClient organizationgrpc.OrganizationServiceClient,
 	symbol string,
 	opt *TickerReadOptions,
 	organizationID string,
-	assetCache *utilcache.Cache,
 ) (*aedgrpc.AEDs, error) {
 	getForPeriodReq := &aedgrpc.GetForPeriodAndTimestampRequest{
 		Symbol:         symbol,
@@ -195,7 +184,7 @@ func getAED(
 		return nil, fmt.Errorf("no latest aed data found for %s", symbol)
 	}
 	// Normalize the AED data
-	normalizedAED, err := NormalizeAED(ctx, assetClient, latestAED, assetCache)
+	normalizedAED, err := NormalizeAED(latestAED)
 	if err != nil {
 		logger.Errorf("Error normalizing AED %v: %v", latestAED, err)
 		return nil, fmt.Errorf("error normalizing aed data for %s: %w", symbol, err)
