@@ -4,6 +4,7 @@ package aed;
 
 option go_package = "github.com/sologenic/com-fs-aed-model;aed";
 
+import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
 
@@ -21,7 +22,7 @@ message AED {
 
     repeated Value Value = 100;
     Series Series = 101;
-    optional Source Source = 102; 
+    optional Source Source = 102;
 }
 
 enum Source {
@@ -36,16 +37,33 @@ enum Series {
     SERIES_NOT_USED = 0;
     INTERNAL_TRADES = 1; // Source: dex trades, Usage: general trade graphs, supports TradeView-like graphing tools (ohlc)
     MARKET_DATA_STOCKS = 2; // Source: external market data provider for the general stock market (can be more than 1 provider, but only a single provider per stock)
-    USER_PERFORMANCE = 3; // Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods 
+    USER_PERFORMANCE = 3; // Source: user account data, Usage: tracks user's portfolio/trading performance over various time periods
     BILLING = 4; // Source: billing data, Usage: tracks billing data for the organization
     REFERRAL = 5; // Source: referral data, Usage: tracks referral data for the organization
 }
 
 message Value {
-    Field Field = 1;
+    // OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE must be > 0 when Float64Val is set.
+    // VOLUME may be 0 (empty / smoothed buckets). All floats still require finite.
+    option (buf.validate.message).cel = {
+        id: "ohlc_float_gt_zero"
+        message: "OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than 0 when set"
+        expression: "!(this.Field in [1, 2, 3, 4, 14, 15]) || !has(this.Float64Val) || this.Float64Val > 0.0"
+    };
+
+    Field Field = 1 [
+        (buf.validate.field).enum = {
+            defined_only: true
+        }
+    ];
     optional string StringVal = 2; // String value
-    optional int64 Int64Val = 3; // Integer value
-    optional double Float64Val = 4; // Float value
+    optional int64 Int64Val = 3 [
+        (buf.validate.field).int64 = {gte: 0}
+    ]; // Integer value
+    // Reject NaN / Inf. Price-like positivity is enforced by the message CEL above.
+    optional double Float64Val = 4 [
+        (buf.validate.field).double = {finite: true}
+    ]; // Float value
     optional bool BoolVal = 5; // Boolean value
 }
 
@@ -69,8 +87,15 @@ enum Field {
 }
 
 message Period {
-    PeriodType Type = 1;
-    int32 Duration = 2; // The duration of the indicated period (e.g 1 minute, 3 minutes, etc)
+    PeriodType Type = 1 [
+        (buf.validate.field).enum = {
+            defined_only: true
+            not_in: [0]
+        }
+    ];
+    int32 Duration = 2 [
+        (buf.validate.field).int32 = {gt: 0}
+    ]; // The duration of the indicated period (e.g 1 minute, 3 minutes, etc)
 }
 
 enum PeriodType {

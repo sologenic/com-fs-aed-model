@@ -51,7 +51,12 @@ for lib_dir in "${lib_dirs[@]}"; do
     fi
 done
 cd $rd
-  
+
+# Same layout as com-fs-asset-model: validate.proto lives next to the monorepo root so
+# --proto_path=$(dirname $(dirname "$rd")) can resolve import "buf/validate/validate.proto".
+mkdir -p ../../buf/validate
+curl https://raw.githubusercontent.com/bufbuild/protovalidate/refs/heads/main/proto/protovalidate/buf/validate/validate.proto > ../../buf/validate/validate.proto
+
 protoc \
 --proto_path=. "aed.proto" \
 --proto_path=$(dirname $(dirname "$rd")) \
