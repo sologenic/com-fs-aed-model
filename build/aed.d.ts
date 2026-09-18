@@ -88,7 +88,7 @@ export interface Value {
     StringVal?: string | undefined;
     /** Integer value */
     Int64Val?: number | undefined;
-    /** Float value */
+    /** Reject NaN / Inf. Price-like positivity is enforced by the message CEL above. */
     Float64Val?: number | undefined;
     /** Boolean value */
     BoolVal?: boolean | undefined;

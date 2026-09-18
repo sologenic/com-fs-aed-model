@@ -5,13 +5,11 @@ export declare enum Network {
     NETWORK_DO_NOT_USE = 0,
     MAINNET = 1,
     TESTNET = 2,
-    DEVNET = 3,
     UNRECOGNIZED = -1
 }
 export declare function networkFromJSON(object: any): Network;
 export declare function networkToJSON(object: Network): string;
 export interface MetaData {
-    /** mainnet, testnet, devnet, can also be some virtually defined network (extra devnet for testing, extra mainnnet node for scanning historical blocks, etc) */
     Network: Network;
     UpdatedAt: Date | undefined;
     /** Internal to listener */

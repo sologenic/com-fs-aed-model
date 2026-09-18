@@ -11,9 +11,9 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// DecimalToPositiveFiniteFloat converts a google.type.Decimal to float64.
-// Rejects nil/empty, non-numeric, non-positive, NaN, and Inf values.
-func DecimalToPositiveFiniteFloat(d *typedecimal.Decimal) (float64, error) {
+// DecimalToFloat converts a google.type.Decimal to float64.
+// Positivity / finite checks belong to Trade and AED protovalidate, not here.
+func DecimalToFloat(d *typedecimal.Decimal) (float64, error) {
 	if d == nil {
 		return 0, fmt.Errorf("decimal is nil")
 	}
@@ -21,14 +21,7 @@ func DecimalToPositiveFiniteFloat(d *typedecimal.Decimal) (float64, error) {
 	if value == "" {
 		return 0, fmt.Errorf("decimal value is empty")
 	}
-	f, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		return 0, err
-	}
-	if f <= 0 || math.IsNaN(f) || math.IsInf(f, 0) {
-		return 0, fmt.Errorf("decimal value must be a positive finite number: %s", value)
-	}
-	return f, nil
+	return strconv.ParseFloat(value, 64)
 }
 
 // NewAEDFromTrade builds a new trade-series AED bucket from one fill.

@@ -59,21 +59,19 @@ func TestMergeTradeIntoAED(t *testing.T) {
 	}
 }
 
-func TestDecimalToPositiveFiniteFloat(t *testing.T) {
-	got, err := DecimalToPositiveFiniteFloat(&decimal.Decimal{Value: "12.34"})
+func TestDecimalToFloat(t *testing.T) {
+	got, err := DecimalToFloat(&decimal.Decimal{Value: "12.34"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	if math.Abs(got-12.34) > 1e-9 {
 		t.Fatalf("got %v", got)
 	}
-	if _, err := DecimalToPositiveFiniteFloat(&decimal.Decimal{Value: "0"}); err == nil {
-		t.Fatal("expected error for zero")
+	// Domain rules (positive / finite) are enforced by protovalidate, not conversion.
+	if _, err := DecimalToFloat(&decimal.Decimal{Value: "0"}); err != nil {
+		t.Fatalf("zero should convert: %v", err)
 	}
-	if _, err := DecimalToPositiveFiniteFloat(nil); err == nil {
+	if _, err := DecimalToFloat(nil); err == nil {
 		t.Fatal("expected error for nil")
-	}
-	if _, err := DecimalToPositiveFiniteFloat(&decimal.Decimal{Value: "NaN"}); err == nil {
-		t.Fatal("expected error for NaN")
 	}
 }
