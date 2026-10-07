@@ -13,6 +13,20 @@ message AEDs {
 }
 
 message AED {
+    // Non-billing: OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE must be > 0 when set.
+    // BILLING (4): those fields may be 0 (empty balance) but must not be negative.
+    // VOLUME may be 0 on any series. All floats still require finite on Value.
+    option (buf.validate.message).cel = {
+        id: "ohlc_float_gt_zero_non_billing"
+        message: "OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than 0 when set (non-billing)"
+        expression: "this.Series == 4 || this.Value.all(v, !(v.Field in [1, 2, 3, 4, 14, 15]) || !has(v.Float64Val) || v.Float64Val > 0.0)"
+    };
+    option (buf.validate.message).cel = {
+        id: "ohlc_float_gte_zero_billing"
+        message: "OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than or equal to 0 when set (billing)"
+        expression: "this.Series != 4 || this.Value.all(v, !(v.Field in [1, 2, 3, 4, 14, 15]) || !has(v.Float64Val) || v.Float64Val >= 0.0)"
+    };
+
     string OrganizationID = 1;
     string Symbol = 2; // Denom1:Denom2
     google.protobuf.Timestamp Timestamp = 3;
@@ -43,14 +57,6 @@ enum Series {
 }
 
 message Value {
-    // OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE must be > 0 when Float64Val is set.
-    // VOLUME may be 0 (empty / smoothed buckets). All floats still require finite.
-    option (buf.validate.message).cel = {
-        id: "ohlc_float_gt_zero"
-        message: "OPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than 0 when set"
-        expression: "!(this.Field in [1, 2, 3, 4, 14, 15]) || !has(this.Float64Val) || this.Float64Val > 0.0"
-    };
-
     Field Field = 1 [
         (buf.validate.field).enum = {
             defined_only: true
@@ -60,7 +66,7 @@ message Value {
     optional int64 Int64Val = 3 [
         (buf.validate.field).int64 = {gte: 0}
     ]; // Integer value
-    // Reject NaN / Inf. Price-like positivity is enforced by the message CEL above.
+    // Reject NaN / Inf. Price-like positivity is enforced on AED by series.
     optional double Float64Val = 4 [
         (buf.validate.field).double = {finite: true}
     ]; // Float value
