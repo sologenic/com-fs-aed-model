@@ -6,7 +6,25 @@ import (
 
 	"buf.build/go/protovalidate"
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+func dayPeriod() *aedgrpc.Period {
+	return &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1}
+}
+
+func aedWithOpen(series aedgrpc.Series, open float64) *aedgrpc.AED {
+	return &aedgrpc.AED{
+		OrganizationID: "org-1",
+		Symbol:         "org-1:utestcore:balance",
+		Timestamp:      timestamppb.Now(),
+		Period:         dayPeriod(),
+		Series:         series,
+		Value: []*aedgrpc.Value{
+			{Field: aedgrpc.Field_OPEN, Float64Val: &open},
+		},
+	}
+}
 
 func TestValueProtovalidate(t *testing.T) {
 	v, err := protovalidate.New()
@@ -38,14 +56,9 @@ func TestValueProtovalidate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "open zero rejected",
+			name:    "open zero allowed on Value alone",
 			value:   &aedgrpc.Value{Field: aedgrpc.Field_OPEN, Float64Val: &zero},
-			wantErr: true,
-		},
-		{
-			name:    "close negative rejected",
-			value:   &aedgrpc.Value{Field: aedgrpc.Field_CLOSE, Float64Val: &neg},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name:    "high nan rejected",
@@ -77,6 +90,80 @@ func TestValueProtovalidate(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			err := v.Validate(tc.value)
+			if tc.wantErr && err == nil {
+				t.Fatalf("expected validation error")
+			}
+			if !tc.wantErr && err != nil {
+				t.Fatalf("unexpected validation error: %v", err)
+			}
+		})
+	}
+}
+
+func TestAEDSeriesOHLCProtovalidate(t *testing.T) {
+	v, err := protovalidate.New()
+	if err != nil {
+		t.Fatalf("protovalidate.New: %v", err)
+	}
+
+	cases := []struct {
+		name    string
+		aed     *aedgrpc.AED
+		wantErr bool
+	}{
+		{
+			name:    "trade open positive",
+			aed:     aedWithOpen(aedgrpc.Series_INTERNAL_TRADES, 10.0),
+			wantErr: false,
+		},
+		{
+			name:    "trade open zero rejected",
+			aed:     aedWithOpen(aedgrpc.Series_INTERNAL_TRADES, 0.0),
+			wantErr: true,
+		},
+		{
+			name:    "trade open negative rejected",
+			aed:     aedWithOpen(aedgrpc.Series_INTERNAL_TRADES, -1.0),
+			wantErr: true,
+		},
+		{
+			name:    "billing open zero allowed",
+			aed:     aedWithOpen(aedgrpc.Series_BILLING, 0.0),
+			wantErr: false,
+		},
+		{
+			name:    "billing open positive allowed",
+			aed:     aedWithOpen(aedgrpc.Series_BILLING, 10.0),
+			wantErr: false,
+		},
+		{
+			name:    "billing open negative rejected",
+			aed:     aedWithOpen(aedgrpc.Series_BILLING, -1.0),
+			wantErr: true,
+		},
+		{
+			name: "billing close zero allowed",
+			aed: func() *aedgrpc.AED {
+				open, close := 0.0, 0.0
+				return &aedgrpc.AED{
+					OrganizationID: "org-1",
+					Symbol:         "org-1:utestcore:balance",
+					Timestamp:      timestamppb.Now(),
+					Period:         dayPeriod(),
+					Series:         aedgrpc.Series_BILLING,
+					Value: []*aedgrpc.Value{
+						{Field: aedgrpc.Field_OPEN, Float64Val: &open},
+						{Field: aedgrpc.Field_CLOSE, Float64Val: &close},
+					},
+				}
+			}(),
+			wantErr: false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := v.Validate(tc.aed)
 			if tc.wantErr && err == nil {
 				t.Fatalf("expected validation error")
 			}

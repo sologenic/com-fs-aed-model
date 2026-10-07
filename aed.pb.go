@@ -443,7 +443,7 @@ type Value struct {
 	Field     Field                  `protobuf:"varint,1,opt,name=Field,proto3,enum=aed.Field" json:"Field,omitempty"`
 	StringVal *string                `protobuf:"bytes,2,opt,name=StringVal,proto3,oneof" json:"StringVal,omitempty"` // String value
 	Int64Val  *int64                 `protobuf:"varint,3,opt,name=Int64Val,proto3,oneof" json:"Int64Val,omitempty"`  // Integer value
-	// Reject NaN / Inf. Price-like positivity is enforced by the message CEL above.
+	// Reject NaN / Inf. Price-like positivity is enforced on AED by series.
 	Float64Val    *float64 `protobuf:"fixed64,4,opt,name=Float64Val,proto3,oneof" json:"Float64Val,omitempty"` // Float value
 	BoolVal       *bool    `protobuf:"varint,5,opt,name=BoolVal,proto3,oneof" json:"BoolVal,omitempty"`        // Boolean value
 	unknownFields protoimpl.UnknownFields
@@ -573,7 +573,7 @@ const file_aed_proto_rawDesc = "" +
 	"\n" +
 	"\taed.proto\x12\x03aed\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a9sologenic/com-fs-utils-lib/models/metadata/metadata.proto\"$\n" +
 	"\x04AEDs\x12\x1c\n" +
-	"\x04AEDs\x18\x01 \x03(\v2\b.aed.AEDR\x04AEDs\"\xf8\x02\n" +
+	"\x04AEDs\x18\x01 \x03(\v2\b.aed.AEDR\x04AEDs\"\x83\a\n" +
 	"\x03AED\x12&\n" +
 	"\x0eOrganizationID\x18\x01 \x01(\tR\x0eOrganizationID\x12\x16\n" +
 	"\x06Symbol\x18\x02 \x01(\tR\x06Symbol\x128\n" +
@@ -584,9 +584,11 @@ const file_aed_proto_rawDesc = "" +
 	"\x05Value\x18d \x03(\v2\n" +
 	".aed.ValueR\x05Value\x12#\n" +
 	"\x06Series\x18e \x01(\x0e2\v.aed.SeriesR\x06Series\x12(\n" +
-	"\x06Source\x18f \x01(\x0e2\v.aed.SourceH\x01R\x06Source\x88\x01\x01B\t\n" +
+	"\x06Source\x18f \x01(\x0e2\v.aed.SourceH\x01R\x06Source\x88\x01\x01:\x88\x04\xbaH\x84\x04\x1a\xfc\x01\n" +
+	"\x1eohlc_float_gt_zero_non_billing\x12cOPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than 0 when set (non-billing)\x1authis.Series == 4 || this.Value.all(v, !(v.Field in [1, 2, 3, 4, 14, 15]) || !has(v.Float64Val) || v.Float64Val > 0.0)\x1a\x82\x02\n" +
+	"\x1bohlc_float_gte_zero_billing\x12kOPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than or equal to 0 when set (billing)\x1avthis.Series != 4 || this.Value.all(v, !(v.Field in [1, 2, 3, 4, 14, 15]) || !has(v.Float64Val) || v.Float64Val >= 0.0)B\t\n" +
 	"\a_UserIDB\t\n" +
-	"\a_Source\"\xd1\x03\n" +
+	"\a_Source\"\x83\x02\n" +
 	"\x05Value\x12*\n" +
 	"\x05Field\x18\x01 \x01(\x0e2\n" +
 	".aed.FieldB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05Field\x12!\n" +
@@ -595,8 +597,7 @@ const file_aed_proto_rawDesc = "" +
 	"\n" +
 	"Float64Val\x18\x04 \x01(\x01B\a\xbaH\x04\x12\x02@\x01H\x02R\n" +
 	"Float64Val\x88\x01\x01\x12\x1d\n" +
-	"\aBoolVal\x18\x05 \x01(\bH\x03R\aBoolVal\x88\x01\x01:\xcb\x01\xbaH\xc7\x01\x1a\xc4\x01\n" +
-	"\x12ohlc_float_gt_zero\x12UOPEN/HIGH/LOW/CLOSE/FIRST_PRICE/LAST_PRICE Float64Val must be greater than 0 when set\x1aW!(this.Field in [1, 2, 3, 4, 14, 15]) || !has(this.Float64Val) || this.Float64Val > 0.0B\f\n" +
+	"\aBoolVal\x18\x05 \x01(\bH\x03R\aBoolVal\x88\x01\x01B\f\n" +
 	"\n" +
 	"_StringValB\v\n" +
 	"\t_Int64ValB\r\n" +
