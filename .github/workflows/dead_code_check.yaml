@@ -1,0 +1,44 @@
+name: Go Dead Code Check
+
+on:
+  push:
+    branches:
+      - staging
+  pull_request:
+    branches:
+      - staging
+
+jobs:
+  deadcode-check:
+    name: Go Dead Code Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Configure Git for private modules
+        env:
+          TOKEN: ${{ secrets.REPOSITORY_READ_ONLY_PAT }}
+        run: |
+          git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install deadcode
+        run: go install golang.org/x/tools/cmd/deadcode@latest
+
+      - name: Run deadcode
+        run: |
+          # Run deadcode and exclude Protobuf files from the output
+          DEADCODE_OUT=$(deadcode . | grep -v '\.pb\.go' || true)
+          if [ -n "$DEADCODE_OUT" ]; then
+            echo "::error::Dead code found:"
+            echo "$DEADCODE_OUT"
+            exit 1
+          else
+            echo "No dead code found!"
+          fi

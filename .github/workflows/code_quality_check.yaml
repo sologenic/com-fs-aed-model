@@ -1,0 +1,36 @@
+name: Go Code Quality Check
+
+on:
+  push:
+    branches:
+      - staging
+  pull_request:
+    branches:
+      - staging
+
+jobs:
+  quality-check:
+    name: Go Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Configure Git for private modules
+        env:
+          TOKEN: ${{ secrets.REPOSITORY_READ_ONLY_PAT }}
+        run: |
+          git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        env:
+          GOPRIVATE: "github.com/sologenic/*"
+        with:
+          version: v2.14.0

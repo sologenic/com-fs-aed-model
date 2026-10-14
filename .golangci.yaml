@@ -1,0 +1,71 @@
+version: "2"
+
+linters:
+  enable:
+    - errorlint
+    - bodyclose
+    - exhaustive
+    - noctx
+    - nilerr
+    - gocritic
+    - gosec
+    - forbidigo
+    - errcheck
+    - ineffassign
+    - modernize
+  settings:
+    errorlint:
+      errorf: true
+      asserts: true
+      comparison: true
+    exhaustive:
+      default-signifies-exhaustive: true
+    gocritic:
+      disabled-checks:
+        - whyNoLint
+      enabled-tags:
+        - diagnostic
+        - performance
+        - style
+    gosec:
+      severity: "medium"
+      confidence: "medium"
+      excludes:
+        - G401 # Use of weak cryptographic primitive (md5/sha1)
+        - G501 # Blocklisted import (crypto/md5)
+    forbidigo:
+      forbid:
+        - pattern: ^metadata\.Network_NETWORK_DO_NOT_USE$
+          msg: "Do not use metadata.Network_NETWORK_DO_NOT_USE. Use metadata.GetNetwork() instead"
+        - pattern: ^.*_DO_NOT_USE$
+        - pattern: ^role\.Role_KYC_ADMINISTRATOR$
+          msg: "Do not use role.Role_KYC_ADMINISTRATOR. Use role.Role_TX_KYC_MANAGER instead"
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - ^tmp/
+      - \.pb\.go$ # Ignore Protobuf files
+    rules:
+      - path: _test\.go
+        linters:
+          - bodyclose
+          - noctx
+          - errcheck
+
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - ^tmp/
+      - \.pb\.go$ # Ignore Protobuf files
