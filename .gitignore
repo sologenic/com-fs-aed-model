@@ -9,3 +9,7 @@ go.work.sum
 node_modules/
 __debug_bin*
 .env.local
+__debug*
+.env.xapp
+repomix-output*
+.vscode/linenote
