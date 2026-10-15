@@ -32,6 +32,11 @@ jobs:
         run: |
           git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/"
 
+      - name: Download dependencies
+        env:
+          GOPRIVATE: "github.com/sologenic/*"
+        run: go mod download
+
       # https://github.com/golangci/golangci-lint-action
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9
