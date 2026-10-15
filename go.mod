@@ -7,11 +7,11 @@ require (
 	buf.build/go/protovalidate v1.2.0
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-asset-model v0.0.0-20261014152321-2ccd14c1ee98
-	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261014184121-6933fe0a39b9
-	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261014184121-6933fe0a39b9
-	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261014184121-6933fe0a39b9
-	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20260921113010-b0e6f3617f70
+	github.com/sologenic/com-fs-asset-model v0.0.0-20261015094533-de4d1998949a
+	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261015114510-759dd7e97daf
+	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261015114510-759dd7e97daf
+	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261015114510-759dd7e97daf
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20261015114509-385fbabbb477
 	google.golang.org/genproto v0.0.0-20260918162117-cecb64721679
 	google.golang.org/grpc v1.83.2
 	google.golang.org/protobuf v1.36.12
@@ -23,7 +23,7 @@ require (
 	cloud.google.com/go/auth v0.23.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
-	cloud.google.com/go/datastore v1.21.0 // indirect
+	cloud.google.com/go/datastore v1.25.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
@@ -36,14 +36,14 @@ require (
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
-	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261014184121-6933fe0a39b9 // indirect
-	github.com/sologenic/gclouddatastore v0.0.0-20260428182012-9ec2e7fe1874 // indirect
+	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261015114510-759dd7e97daf // indirect
+	github.com/sologenic/gclouddatastore v0.0.0-20261015094531-bfc95c300b22 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
-	go.opentelemetry.io/otel v1.44.0 // indirect
-	go.opentelemetry.io/otel/metric v1.44.0 // indirect
-	go.opentelemetry.io/otel/trace v1.44.0 // indirect
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/exp v0.0.0-20250813145105-42675adae3e6 // indirect
 	golang.org/x/mod v0.38.0 // indirect
