@@ -341,7 +341,7 @@ export interface Value {
   Int64Val?:
     | number
     | undefined;
-  /** Reject NaN / Inf. Price-like positivity is enforced by the message CEL above. */
+  /** Reject NaN / Inf. Price-like positivity is enforced on AED by series. */
   Float64Val?:
     | number
     | undefined;
