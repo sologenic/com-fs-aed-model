@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package aed;
 
-import "sologenic/com-fs-utils-lib/models/metadata/metadata.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "aed.proto";
@@ -27,7 +26,8 @@ message AEDFilter {
     google.protobuf.Timestamp From = 2;
     optional bool SingleBucket = 3; // Apply from as equal to retrieve only this one bucket for the given time
     google.protobuf.Timestamp To = 4; 
-    metadata.Network Network = 5;
+    reserved 5;
+    reserved "Network";
     Period Period = 6;
     // Indicate if the data should be backfilled with the previous period if no data is found
     bool Backfill = 7;
@@ -63,7 +63,8 @@ message PeriodBucket {
 
 message GetForPeriodAndTimestampRequest {
     string Symbol = 1;
-    metadata.Network Network = 2;
+    reserved 2;
+    reserved "Network";
     Series Series = 3; // Series to filter the AEDs by
     string OrganizationID = 4;
     Period Period = 5;
