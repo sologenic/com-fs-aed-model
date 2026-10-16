@@ -170,7 +170,6 @@ func getAED(
 ) (*aedgrpc.AEDs, error) {
 	getForPeriodReq := &aedgrpc.GetForPeriodAndTimestampRequest{
 		Symbol:         symbol,
-		Network:        opt.Network,
 		Series:         opt.Series,
 		OrganizationID: organizationID,
 		Period:         &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1},
