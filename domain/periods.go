@@ -31,19 +31,20 @@ func init() {
 }
 
 func initPeriodsList() {
-	PeriodsList = make([]*aedgrpc.Period, 0)
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 1})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 3})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 5})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 15})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 30})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 1})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 3})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 6})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 12})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 3})
-	PeriodsList = append(PeriodsList, &aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_WEEK, Duration: 1})
+	PeriodsList = []*aedgrpc.Period{
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 1},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 3},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 5},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 15},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 30},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 1},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 3},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 6},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_HOUR, Duration: 12},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 1},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_DAY, Duration: 3},
+		{Type: aedgrpc.PeriodType_PERIOD_TYPE_WEEK, Duration: 1},
+	}
 }
 
 func initPeriodsMap() {
@@ -107,6 +108,7 @@ func ToMinute(p *aedgrpc.Period) *aedgrpc.Period {
 		d = p.Duration * 60 * 24
 	case aedgrpc.PeriodType_PERIOD_TYPE_WEEK:
 		d = p.Duration * 60 * 24 * 7
+	default:
 	}
 	return &aedgrpc.Period{
 		Type:     pt,
@@ -125,10 +127,10 @@ func Offset(p *aedgrpc.Period) int64 {
 func ToAEDKeyTimestamp(p *aedgrpc.Period, timestamp int64) int64 {
 	t := ToMinute(p)
 	ts := timestamp - timestamp%(int64(t.Duration)*secondsInMinute)
-	ts = ts + Offset(p)
+	ts += Offset(p)
 	if ts > timestamp {
 		// Correct the week calculation if the period is beyond the calculated value
-		ts = ts - secondsInWeek
+		ts -= secondsInWeek
 	}
 	return ts
 }
@@ -149,7 +151,7 @@ func ToAEDKeyTimestampTo(p *aedgrpc.Period, timestamp int64) int64 {
 	t := ToMinute(p)
 	ts := ToAEDKeyTimestamp(p, timestamp)
 	// Set to end of period:
-	ts = ts + int64(t.Duration)*secondsInMinute
+	ts += int64(t.Duration) * secondsInMinute
 	return ts
 }
 

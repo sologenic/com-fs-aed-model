@@ -12,7 +12,7 @@ import (
 	assetdmnpair "github.com/sologenic/com-fs-asset-model/domain/pair"
 )
 
-type AEDPointResponse [6]interface{}
+type AEDPointResponse [6]any
 
 var allowedValues = map[string]bool{
 	"1m":  true,
@@ -47,7 +47,10 @@ func HttpPeriodToPeriod(value string) (*aedgrpc.Period, error) {
 		return period, fmt.Errorf("invalid value: %s", value)
 	}
 
-	duration, _ := strconv.Atoi(matches[1])
+	duration, err := strconv.ParseInt(matches[1], 10, 32)
+	if err != nil {
+		return nil, fmt.Errorf("invalid duration: %s", matches[1])
+	}
 	period.Duration = int32(duration)
 	period.Type = mapStringToPeriodType(matches[2])
 	return period, nil
@@ -64,7 +67,7 @@ func mapStringToPeriodType(s string) aedgrpc.PeriodType {
 	case "w":
 		return aedgrpc.PeriodType_PERIOD_TYPE_WEEK
 	default:
-		return aedgrpc.PeriodType_PERIOD_TYPE_DO_NOT_USE
+		return aedgrpc.PeriodType(0)
 	}
 }
 
@@ -87,7 +90,7 @@ func SmoothOutliers(series []*aedgrpc.AED, index int) *aedgrpc.AED {
 	open := ParseFieldValue[float64](data, aedgrpc.Field_OPEN)
 	high := ParseFieldValue[float64](data, aedgrpc.Field_HIGH)
 	low := ParseFieldValue[float64](data, aedgrpc.Field_LOW)
-	close := ParseFieldValue[float64](data, aedgrpc.Field_CLOSE)
+	closePrice := ParseFieldValue[float64](data, aedgrpc.Field_CLOSE)
 	if high/low > 3 {
 		// Create new AED with same metadata
 		o := &aedgrpc.AED{
@@ -110,18 +113,18 @@ func SmoothOutliers(series []*aedgrpc.AED, index int) *aedgrpc.AED {
 			newHigh = open
 			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_OPEN, open))
 			fallthrough
-		case high/close > 3:
+		case high/closePrice > 3:
 			// Close is correct
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_CLOSE, close))
-			if close > newHigh {
-				newHigh = close
+			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_CLOSE, closePrice))
+			if closePrice > newHigh {
+				newHigh = closePrice
 			}
 			fallthrough
 		case high/open < 2:
 			// Open is incorrect (the high was the open)
 			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_OPEN, newHigh))
 			fallthrough
-		case high/close < 2:
+		case high/closePrice < 2:
 			// Close is incorrect (the high was the close)
 			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_CLOSE, newHigh))
 		}
@@ -161,11 +164,13 @@ func SmoothOutliers(series []*aedgrpc.AED, index int) *aedgrpc.AED {
 			}
 
 			// Use lookupClose for all values
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_OPEN, lookupClose))
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_HIGH, lookupClose))
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_LOW, lookupClose))
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_CLOSE, lookupClose))
-			o.Value = append(o.Value, CreateFieldValue(aedgrpc.Field_VOLUME, 0.0))
+			o.Value = append(o.Value,
+				CreateFieldValue(aedgrpc.Field_OPEN, lookupClose),
+				CreateFieldValue(aedgrpc.Field_HIGH, lookupClose),
+				CreateFieldValue(aedgrpc.Field_LOW, lookupClose),
+				CreateFieldValue(aedgrpc.Field_CLOSE, lookupClose),
+				CreateFieldValue(aedgrpc.Field_VOLUME, 0.0),
+			)
 
 			return o
 		}
@@ -293,6 +298,7 @@ func NormalizeAED(aed *aedgrpc.AED) (*aedgrpc.AED, error) {
 			// We need the quote volume in unit notation: volume * 10^-quotePrecision
 			normalizedVal := invVolumeVal * dec.New(1, int32(-quotePrecision)).InexactFloat64()
 			v.Float64Val = &normalizedVal
+		default:
 		}
 	}
 	return aed, nil

@@ -128,7 +128,7 @@ func getTickers(
 	// Retrieve the tickers from the AED service:
 	tickerAEDs := make(map[string]*aedgrpc.AED)
 
-	AEDs := make([]*aedgrpc.AEDs, 0, len(opt.Symbols))
+	aeds := make([]*aedgrpc.AEDs, 0, len(opt.Symbols))
 	var mutex sync.Mutex
 	var wg sync.WaitGroup
 	for _, symbol := range opt.Symbols {
@@ -150,13 +150,13 @@ func getTickers(
 				return
 			}
 			mutex.Lock()
-			AEDs = append(AEDs, baseAEDs)
+			aeds = append(aeds, baseAEDs)
 			mutex.Unlock()
 			wg.Done()
 		}(symbol)
 	}
 	wg.Wait()
-	tickersResp := AEDsToTickers(AEDs, opt, tickerAEDs, tickerCache)
+	tickersResp := AEDsToTickers(aeds, opt, tickerAEDs, tickerCache)
 	return (*Tickers)(&tickersResp)
 }
 
@@ -194,8 +194,8 @@ func getAED(
 // AEDsToTickers converts the aed data to ticker data
 // The values calculated are cached for refreshInterval max (clock rounded to refreshInterval intervals) with an allowed stale period of 5s, giving an always retrieval of values
 // from the cache for performance and data cost reasons (we can refresh in a go blocking routine while the data is still being served quickly)
-func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, tickerCache *utilcache.Cache) map[string]*aedgrpc.AED {
-	for _, aed := range AEDs {
+func AEDsToTickers(aeds []*aedgrpc.AEDs, domainOptions *TickerReadOptions, tickerAEDs map[string]*aedgrpc.AED, tickerCache *utilcache.Cache) map[string]*aedgrpc.AED {
+	for _, aed := range aeds {
 		tickerAED := calculateTickerAED(aed, domainOptions)
 		tickerAEDs[aed.AEDs[0].Symbol] = tickerAED
 		tickerCache.Mutex.Lock()
@@ -210,18 +210,18 @@ func AEDsToTickers(AEDs []*aedgrpc.AEDs, domainOptions *TickerReadOptions, ticke
 
 // calculate the open, high, low, close, volume and invertedVolume
 // Returns a single AED with the calculated values.
-func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc.AED {
-	if len(AEDs.AEDs) == 0 {
+func calculateTickerAED(aeds *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc.AED {
+	if len(aeds.AEDs) == 0 {
 		return nil
 	}
 	// Use the latest AED data directly since we're getting the most recent data
-	latestAED := AEDs.AEDs[0]
+	latestAED := aeds.AEDs[0]
 
 	// Extract values using helper functions
 	open := GetFloatValue(latestAED, aedgrpc.Field_OPEN)
 	high := GetFloatValue(latestAED, aedgrpc.Field_HIGH)
 	low := GetFloatValue(latestAED, aedgrpc.Field_LOW)
-	close := GetFloatValue(latestAED, aedgrpc.Field_CLOSE)
+	closePrice := GetFloatValue(latestAED, aedgrpc.Field_CLOSE)
 	volume := GetFloatValue(latestAED, aedgrpc.Field_VOLUME)
 	invertedVolume := GetFloatValue(latestAED, aedgrpc.Field_INVERTED_VOLUME)
 	marketCap := GetFloatValue(latestAED, aedgrpc.Field_MARKET_CAP)
@@ -249,8 +249,8 @@ func calculateTickerAED(AEDs *aedgrpc.AEDs, options *TickerReadOptions) *aedgrpc
 	SetFloatValue(tickerAED, aedgrpc.Field_OPEN, open)
 	SetFloatValue(tickerAED, aedgrpc.Field_HIGH, high)
 	SetFloatValue(tickerAED, aedgrpc.Field_LOW, low)
-	SetFloatValue(tickerAED, aedgrpc.Field_CLOSE, close)
-	SetFloatValue(tickerAED, aedgrpc.Field_LAST_PRICE, close)
+	SetFloatValue(tickerAED, aedgrpc.Field_CLOSE, closePrice)
+	SetFloatValue(tickerAED, aedgrpc.Field_LAST_PRICE, closePrice)
 	SetFloatValue(tickerAED, aedgrpc.Field_FIRST_PRICE, open)
 	SetFloatValue(tickerAED, aedgrpc.Field_VOLUME, volume)
 	SetFloatValue(tickerAED, aedgrpc.Field_INVERTED_VOLUME, invertedVolume)

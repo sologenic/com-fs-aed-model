@@ -183,7 +183,7 @@ func TestPeriodProtovalidate(t *testing.T) {
 	if err := v.Validate(&aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 1}); err != nil {
 		t.Fatalf("valid period: %v", err)
 	}
-	if err := v.Validate(&aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_DO_NOT_USE, Duration: 1}); err == nil {
+	if err := v.Validate(&aedgrpc.Period{Type: aedgrpc.PeriodType(0), Duration: 1}); err == nil {
 		t.Fatalf("expected error for unused period type")
 	}
 	if err := v.Validate(&aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 0}); err == nil {
