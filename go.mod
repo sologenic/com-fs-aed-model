@@ -7,11 +7,11 @@ require (
 	buf.build/go/protovalidate v1.2.0
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-asset-model v0.0.0-20261015125758-94c428c934d0
-	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261015130520-f7a6a5e49aa5
-	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261015130520-f7a6a5e49aa5
-	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261015130520-f7a6a5e49aa5
-	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20261015130520-de4f93512d97
+	github.com/sologenic/com-fs-asset-model v0.0.0-20261015130541-3370d135b3e6
+	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261017194335-c015f8344527
+	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261017194335-c015f8344527
+	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261017194335-c015f8344527
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20261017194335-58b9490f29d1
 	google.golang.org/genproto v0.0.0-20260918162117-cecb64721679
 	google.golang.org/grpc v1.83.2
 	google.golang.org/protobuf v1.36.12
@@ -36,7 +36,7 @@ require (
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
-	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261015130520-f7a6a5e49aa5 // indirect
+	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261017194335-c015f8344527 // indirect
 	github.com/sologenic/gclouddatastore v0.0.0-20261015094531-bfc95c300b22 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0 // indirect
