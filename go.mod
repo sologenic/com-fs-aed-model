@@ -3,17 +3,17 @@ module github.com/sologenic/com-fs-aed-model
 go 1.27.1
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2
 	buf.build/go/protovalidate v1.2.0
 	github.com/google/go-cmp v0.7.0
 	github.com/shopspring/decimal v1.4.0
-	github.com/sologenic/com-fs-asset-model v0.0.0-20261015130541-3370d135b3e6
-	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261017194335-c015f8344527
-	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261017194335-c015f8344527
-	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261017194335-c015f8344527
-	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20261017194335-58b9490f29d1
+	github.com/sologenic/com-fs-asset-model v0.0.0-20261021183712-a6c58f62450a
+	github.com/sologenic/com-fs-utils-internal-lib/go/cache v0.0.0-20261021192929-ec070c03bfa4
+	github.com/sologenic/com-fs-utils-internal-lib/go/grpc-client v0.0.0-20261021192929-ec070c03bfa4
+	github.com/sologenic/com-fs-utils-internal-lib/go/logger v0.0.0-20261021192929-ec070c03bfa4
+	github.com/sologenic/com-fs-utils-lib/models/metadata v0.0.0-20261021192932-75a70c22aad8
 	google.golang.org/genproto v0.0.0-20260918162117-cecb64721679
-	google.golang.org/grpc v1.83.2
+	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
 )
 
@@ -22,7 +22,7 @@ require (
 	cloud.google.com/go v0.123.0 // indirect
 	cloud.google.com/go/auth v0.23.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
-	cloud.google.com/go/compute/metadata v0.9.0 // indirect
+	cloud.google.com/go/compute/metadata v0.10.0 // indirect
 	cloud.google.com/go/datastore v1.25.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -36,8 +36,8 @@ require (
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
-	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261017194335-c015f8344527 // indirect
-	github.com/sologenic/gclouddatastore v0.0.0-20261015094531-bfc95c300b22 // indirect
+	github.com/sologenic/com-fs-utils-internal-lib/go/unittest v0.0.0-20261021192929-ec070c03bfa4 // indirect
+	github.com/sologenic/gclouddatastore v0.0.0-20261021193641-d7ed50aed20f // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
@@ -49,8 +49,8 @@ require (
 	golang.org/x/mod v0.38.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
 	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
