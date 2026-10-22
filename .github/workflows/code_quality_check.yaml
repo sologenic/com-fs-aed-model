@@ -32,7 +32,12 @@ jobs:
         env:
           TOKEN: ${{ secrets.REPOSITORY_READ_ONLY_PAT }}
         run: |
-          git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/"
+          cat <<EOF > ~/.netrc
+          machine github.com
+          login x-oauth-basic
+          password ${TOKEN}
+          EOF
+          chmod 600 ~/.netrc
 
       # https://github.com/golangci/golangci-lint-action
       - name: Run golangci-lint

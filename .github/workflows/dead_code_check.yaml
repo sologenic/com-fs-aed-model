@@ -18,6 +18,8 @@ jobs:
       # https://github.com/actions/checkout
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       # https://github.com/actions/setup-go
       - name: Setup Go
@@ -30,7 +32,12 @@ jobs:
         env:
           TOKEN: ${{ secrets.REPOSITORY_READ_ONLY_PAT }}
         run: |
-          git config --global url."https://${TOKEN}@github.com/".insteadOf "https://github.com/"
+          cat <<EOF > ~/.netrc
+          machine github.com
+          login x-oauth-basic
+          password ${TOKEN}
+          EOF
+          chmod 600 ~/.netrc
 
       - name: Install deadcode
         run: go install golang.org/x/tools/cmd/deadcode@latest
