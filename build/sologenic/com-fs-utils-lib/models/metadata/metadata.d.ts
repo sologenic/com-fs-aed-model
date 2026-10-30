@@ -10,7 +10,6 @@ export declare enum Network {
 export declare function networkFromJSON(object: any): Network;
 export declare function networkToJSON(object: Network): string;
 export interface MetaData {
-    Network: Network;
     UpdatedAt: Date | undefined;
     /** Internal to listener */
     CreatedAt: Date | undefined;
@@ -22,23 +21,19 @@ export declare const MetaData: {
     fromJSON(object: any): MetaData;
     toJSON(message: MetaData): unknown;
     create<I extends {
-        Network?: Network | undefined;
         UpdatedAt?: Date | undefined;
         CreatedAt?: Date | undefined;
         UpdatedByAccount?: string | undefined;
     } & {
-        Network?: Network | undefined;
         UpdatedAt?: Date | undefined;
         CreatedAt?: Date | undefined;
         UpdatedByAccount?: string | undefined;
     } & { [K in Exclude<keyof I, keyof MetaData>]: never; }>(base?: I | undefined): MetaData;
     fromPartial<I_1 extends {
-        Network?: Network | undefined;
         UpdatedAt?: Date | undefined;
         CreatedAt?: Date | undefined;
         UpdatedByAccount?: string | undefined;
     } & {
-        Network?: Network | undefined;
         UpdatedAt?: Date | undefined;
         CreatedAt?: Date | undefined;
         UpdatedByAccount?: string | undefined;

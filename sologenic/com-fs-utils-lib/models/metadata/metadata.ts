@@ -51,7 +51,6 @@ export function networkToJSON(object: Network): string {
 }
 
 export interface MetaData {
-  Network: Network;
   UpdatedAt:
     | Date
     | undefined;
@@ -61,14 +60,11 @@ export interface MetaData {
 }
 
 function createBaseMetaData(): MetaData {
-  return { Network: 0, UpdatedAt: undefined, CreatedAt: undefined, UpdatedByAccount: undefined };
+  return { UpdatedAt: undefined, CreatedAt: undefined, UpdatedByAccount: undefined };
 }
 
 export const MetaData = {
   encode(message: MetaData, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.Network !== 0) {
-      writer.uint32(8).int32(message.Network);
-    }
     if (message.UpdatedAt !== undefined) {
       Timestamp.encode(toTimestamp(message.UpdatedAt), writer.uint32(18).fork()).ldelim();
     }
@@ -88,13 +84,6 @@ export const MetaData = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.Network = reader.int32() as any;
-          continue;
         case 2:
           if (tag !== 18) {
             break;
@@ -127,7 +116,6 @@ export const MetaData = {
 
   fromJSON(object: any): MetaData {
     return {
-      Network: isSet(object.Network) ? networkFromJSON(object.Network) : 0,
       UpdatedAt: isSet(object.UpdatedAt) ? fromJsonTimestamp(object.UpdatedAt) : undefined,
       CreatedAt: isSet(object.CreatedAt) ? fromJsonTimestamp(object.CreatedAt) : undefined,
       UpdatedByAccount: isSet(object.UpdatedByAccount) ? globalThis.String(object.UpdatedByAccount) : undefined,
@@ -136,9 +124,6 @@ export const MetaData = {
 
   toJSON(message: MetaData): unknown {
     const obj: any = {};
-    if (message.Network !== 0) {
-      obj.Network = networkToJSON(message.Network);
-    }
     if (message.UpdatedAt !== undefined) {
       obj.UpdatedAt = message.UpdatedAt.toISOString();
     }
@@ -156,7 +141,6 @@ export const MetaData = {
   },
   fromPartial<I extends Exact<DeepPartial<MetaData>, I>>(object: I): MetaData {
     const message = createBaseMetaData();
-    message.Network = object.Network ?? 0;
     message.UpdatedAt = object.UpdatedAt ?? undefined;
     message.CreatedAt = object.CreatedAt ?? undefined;
     message.UpdatedByAccount = object.UpdatedByAccount ?? undefined;

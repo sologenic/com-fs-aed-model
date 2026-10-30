@@ -113,7 +113,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -139,7 +138,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -163,7 +161,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -190,12 +187,10 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } & { [K in Exclude<keyof I["AEDs"][number]["Period"], keyof Period>]: never; }) | undefined;
             MetaData?: ({
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } & {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -237,7 +232,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -264,7 +258,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -290,7 +283,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -314,7 +306,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -341,12 +332,10 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } & { [K_7 in Exclude<keyof I_1["AEDs"][number]["Period"], keyof Period>]: never; }) | undefined;
             MetaData?: ({
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
             } & {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -388,7 +377,6 @@ export declare const AEDs: {
                 Duration?: number | undefined;
             } | undefined;
             MetaData?: {
-                Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
                 UpdatedAt?: Date | undefined;
                 CreatedAt?: Date | undefined;
                 UpdatedByAccount?: string | undefined;
@@ -420,7 +408,6 @@ export declare const AED: {
             Duration?: number | undefined;
         } | undefined;
         MetaData?: {
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
@@ -447,12 +434,10 @@ export declare const AED: {
             Duration?: number | undefined;
         } & { [K in Exclude<keyof I["Period"], keyof Period>]: never; }) | undefined;
         MetaData?: ({
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } & {
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
@@ -495,7 +480,6 @@ export declare const AED: {
             Duration?: number | undefined;
         } | undefined;
         MetaData?: {
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
@@ -522,12 +506,10 @@ export declare const AED: {
             Duration?: number | undefined;
         } & { [K_5 in Exclude<keyof I_1["Period"], keyof Period>]: never; }) | undefined;
         MetaData?: ({
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
         } & {
-            Network?: import("./sologenic/com-fs-utils-lib/models/metadata/metadata").Network | undefined;
             UpdatedAt?: Date | undefined;
             CreatedAt?: Date | undefined;
             UpdatedByAccount?: string | undefined;
