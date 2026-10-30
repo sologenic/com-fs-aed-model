@@ -6,7 +6,6 @@ import (
 	"time"
 
 	aedgrpc "github.com/sologenic/com-fs-aed-model"
-	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 	"google.golang.org/genproto/googleapis/type/decimal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -19,7 +18,6 @@ func TestNewAEDFromTrade(t *testing.T) {
 		"AAPL:USD",
 		period,
 		bucketTs,
-		metadata.Network_TESTNET,
 		100.5,
 		2.0,
 	)
@@ -40,7 +38,6 @@ func TestMergeTradeIntoAED(t *testing.T) {
 		"org", "AAPL:USD",
 		&aedgrpc.Period{Type: aedgrpc.PeriodType_PERIOD_TYPE_MINUTE, Duration: 1},
 		timestamppb.Now(),
-		metadata.Network_TESTNET,
 		100, 1,
 	)
 

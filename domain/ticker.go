@@ -13,7 +13,6 @@ import (
 	assetdmnpair "github.com/sologenic/com-fs-asset-model/domain/pair"
 	utilcache "github.com/sologenic/com-fs-utils-internal-lib/go/cache"
 	"github.com/sologenic/com-fs-utils-internal-lib/go/logger"
-	"github.com/sologenic/com-fs-utils-lib/models/metadata"
 )
 
 const (
@@ -32,7 +31,6 @@ type TickerResponse struct {
 type TickerReadOptions struct {
 	Symbols []string
 	Period  time.Duration
-	Network metadata.Network
 	Series  aedgrpc.Series
 }
 

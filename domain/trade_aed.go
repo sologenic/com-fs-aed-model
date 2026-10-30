@@ -29,7 +29,6 @@ func NewAEDFromTrade(
 	organizationID, symbol string,
 	period *aedgrpc.Period,
 	bucketTs *timestamppb.Timestamp,
-	network metadata.Network,
 	price, qty float64,
 ) *aedgrpc.AED {
 	return &aedgrpc.AED{
@@ -41,7 +40,6 @@ func NewAEDFromTrade(
 		MetaData: &metadata.MetaData{
 			CreatedAt: timestamppb.Now(),
 			UpdatedAt: timestamppb.Now(),
-			Network:   network,
 		},
 		Value: []*aedgrpc.Value{
 			{Field: aedgrpc.Field_OPEN, Float64Val: new(price)},
